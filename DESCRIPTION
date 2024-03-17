@@ -1,0 +1,29 @@
+Package: microfunk
+Title: What the Package Does (One Line, Title Case)
+Version: 0.99.0
+Authors@R: 
+    c(person(given = "Judit",
+             family = "Farré-Badia",
+             role = c("aut", "cre"),
+             email = "judit.farre@autonoma.cat",
+             comment = c(ORCID = " "))
+    )
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(roclets = c("collate", "namespace", "rd", "roxytest::testthat_roclet",
+    "roxyglobals::global_roclet"), markdown = TRUE)
+URL: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk,
+    https://microbialgenomics-irsicaixaorg.github.io/microfunk/
+BugReports: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/issues
+biocViews: Software, Sequencing, Microbiome, Metagenomics
+Imports:
+Suggests:
+Config/testthat/edition: 3
+Depends: 
+    R (>= 4.4.0)
+LazyData: false
+VignetteBuilder: knitr
+Config/roxyglobals/filename: globals.R
+Config/roxyglobals/unique: TRUE
+Config/testthat/parallel: true
