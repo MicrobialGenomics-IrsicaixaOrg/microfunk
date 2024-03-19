@@ -6,9 +6,9 @@
 <!-- badges: start -->
 
 [![GitHub
-issues](https://img.shields.io/github/issues/juditfarreb/microfunk)](https://github.com/juditfarreb/microfunk/issues)
+issues](https://img.shields.io/github/issues/MicrobialGenomics-IrsicaixaOrg/microfunk)](https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/issues)
 [![GitHub
-pulls](https://img.shields.io/github/issues-pr/juditfarreb/microfunk)](https://github.com/juditfarreb/microfunk/pulls)
+pulls](https://img.shields.io/github/issues-pr/MicrobialGenomics-IrsicaixaOrg/microfunk)](https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/pulls)
 <!-- badges: end -->
 
 The goal of `microfunk` is to …
