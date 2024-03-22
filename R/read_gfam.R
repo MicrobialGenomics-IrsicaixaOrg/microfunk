@@ -10,7 +10,9 @@
 #' package = "microfunk")
 #' read_gfam(example.file)
 #'
-#'
+
+library(tidyverse)
+
 read_gfam = function(input){
 
   # Check header
