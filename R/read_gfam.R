@@ -1,82 +1,68 @@
-#' Title
+#' Read HUMAnN Gene Families
 #'
-#' @param input A tsv file of gene family abundances.
+#' This function reads in a HUMAnN gene families file and performs several
+#' checks on the data. It also normalizes the data and renames the columns for
+#' easier downstream analysis.
 #'
-#' @return A tibble.
+#' @param file_path A string. The path to the HUMAnN gene families file.
+#'
+#' @return A tibble. The gene families data with columns: 'class', 'annotation',
+#'   and 'norm' (normalized counts).
 #' @export
+#' @tests
+#' file_path <-
+#'   system.file("extdata", "demo_genefamilies.tsv", package = "microfunk")
+#'
+#' # Test output has tree columns
+#' testthat::expect_equal(ncol(read_gfam(file_path)), 3)
 #'
 #' @examples
-#' example.file = system.file("extdata", "demo_genefamilies.tsv",
-#' package = "microfunk")
-#' read_gfam(example.file)
+#' file_path <-
+#'   system.file("extdata", "demo_genefamilies.tsv", package = "microfunk")
 #'
+#' gfam <- read_gfam(file_path)
+read_gfam <- function(file_path) {
+  # read in the file
+  tbl <-
+    data.table::fread(file_path) %>%
+    tibble::as_tibble()
 
-library(tidyverse)
-
-read_gfam = function(input){
-
-  # Check header
-  header = input %>%
-    select(1) %>%
-    colnames()
-
-  if (!str_detect(header, "^# Gene Family$")){
-    stop("Header does not match the expected format.")
+  # check header
+  header <- colnames(tbl)
+  if (!stringr::str_detect(header[1], "^# Gene Family$")) {
+    cli::cli_abort("The header of the file is not correct.")
   }
 
-  # Rename header
-  data = input %>%
-    rename("# gene-family" = header)
-
-  # Check rows
-  if (nrow(input) == 0){
-    stop("No data rows found.")
+  # check number of rows
+  if (nrow(tbl) <= 1) {
+    cli::cli_abort("The file does not contain any data.")
   }
 
-  # Check columns
-  if (ncol(input) != 2){
-    stop ("Incorrect number of columns.")
-  } else{
-    name = input %>%
-      select(2) %>%
-      colnames()
+  # check number of columns
+  if (ncol(tbl) != 2) { cli::cli_abort("ncol(input) != 2") }
 
-    if (!is.numeric(input[[2]])){
-      stop ("Second column is not numeric.")
-    } else{
-
-      # Check units (RPKs/CPM)
-      filtered.data = data %>%
-        filter(data[[1]] == 'UNMAPPED' |
-                 data[[1]] == 'UNKNOWN' |
-                 grepl("^UniRef90_[^|]+$", data[[1]]))
-
-      sum_col = sum(filtered.data[[2]], na.rm = TRUE)
-
-      if (sum_col >= 999900 && sum_col <= 1000100){
-        # CPM
-        data = data %>%
-          rename("CPM" = name)
-      } else{
-        # RPKs
-        data = data %>%
-          rename("RPKs" = name)
-      }
-    }
+  # check column classes
+  class_1 <- class(tbl[[1]]) == "character"
+  class_2 <- class(tbl[[2]]) == "numeric"
+  if (!class_1 || !class_2) {
+    cli::cli_abort("The column classes are not correct.")
   }
-  # Return transformed tibble
-  return (data)
 
+  # check data normalitzation
+  sum_counts <-
+    tbl %>%
+    dplyr::filter(!stringr::str_detect(`# Gene Family`, "[|]")) %>%
+    dplyr::pull(2) %>%
+    sum()
+
+  norm <- "rpk"
+  if (dplyr::between(sum_counts, 999900, 1000100)) { norm <- "cpm" }
+
+  # Prepare tbl
+  tbl <-
+    tbl %>%
+    stats::setNames(c("annotation", norm)) %>%
+    dplyr::mutate(class = "gene_family", .before = 1)
+
+  tbl
 }
-
-
-
-
-
-
-
-
-
-
-
-
