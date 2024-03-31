@@ -1,0 +1,12 @@
+# Pathway	demo_Abundance	extra_col
+UNMAPPED	31874.2036279872	a
+UNINTEGRATED	7558.9585442320	b
+UNINTEGRATED|g__Bacteroides.s__Bacteroides_vulgatus	7558.9585442320	c
+PWY-6700: queuosine biosynthesis I (de novo)	42.7989442756	d
+PWY-6700: queuosine biosynthesis I (de novo)|g__Bacteroides.s__Bacteroides_vulgatus	42.7989442756	e
+COA-PWY: coenzyme A biosynthesis I (prokaryotic)	38.8536398465	f
+COA-PWY: coenzyme A biosynthesis I (prokaryotic)|g__Bacteroides.s__Bacteroides_vulgatus	38.8536398465	g
+PWY-7851: coenzyme A biosynthesis II (eukaryotic)	30.7138748056	h
+PWY-7851: coenzyme A biosynthesis II (eukaryotic)|g__Bacteroides.s__Bacteroides_vulgatus	30.7138748056	i
+PWY0-1586: peptidoglycan maturation (meso-diaminopimelate containing)	29.6584953735	j
+PWY0-1586: peptidoglycan maturation (meso-diaminopimelate containing)|g__Bacteroides.s__Bacteroides_vulgatus	29.6584953735	k
