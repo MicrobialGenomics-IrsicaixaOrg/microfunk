@@ -34,5 +34,6 @@ Imports:
     data.table,
     dplyr,
     magrittr,
+    purrr,
     stringr,
     tibble
