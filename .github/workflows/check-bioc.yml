@@ -74,6 +74,8 @@ jobs:
         run: |
           mkdir /__w/_temp/Library
           echo ".libPaths('/__w/_temp/Library')" > ~/.Rprofile
+          mkdir -p ~/.R
+          echo "CFLAGS=-w" > ~/.R/Makevars
 
       ## Most of these steps are the same as the ones in
       ## https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml
@@ -105,23 +107,16 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-devel-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-devel-
+          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.3-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.3-
 
       - name: Cache R packages on Linux
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os == 'Linux' "
         uses: actions/cache@v3
         with:
           path: /home/runner/work/_temp/Library
-          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-devel-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-devel-
-
-      # - name: Install Linux system dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sysreqs=$(Rscript -e 'cat("apt-get update -y && apt-get install -y", paste(gsub("apt-get install -y ", "", remotes::system_requirements("ubuntu", "20.04")), collapse = " "))')
-      #     echo $sysreqs
-      #     sudo -s eval "$sysreqs"
+          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.3-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.3-
 
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
@@ -139,6 +134,9 @@ jobs:
 
           ## For installing usethis's dependency gert
           brew install libgit2
+
+          ## For installing gsl
+          brew install gsl
 
           ## Required for tcltk
           brew install xquartz --cask
@@ -285,7 +283,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@master
         with:
-          name: ${{ runner.os }}-biocversion-devel-r-devel-results
+          name: ${{ runner.os }}-biocversion-devel-r-4.3-results
           path: check
 
 
