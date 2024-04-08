@@ -1,8 +1,8 @@
 ---
 name: Feature Request
 about: Suggest an idea for this package
-title: "[Feature Request] A short description of the feature"
-labels: ''
+title: "[FEATURE] A short description of the feature"
+labels: 'enhancement'
 assignees: ''
 ---
 
