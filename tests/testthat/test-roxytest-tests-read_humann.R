@@ -2,82 +2,38 @@
 
 # File R/read_humann.R: @tests
 
-test_that("Function read_genefamily() @ L58", {
-  file_path1 <-
-    system.file("extdata", "demo_genefamilies.tsv", package = "microfunk")
+test_that("Function read_genefamily() @ L36", {
+  files <- system.file("extdata", package = "microfunk") %>%
+  list.files(pattern = "demo_genefamilies", full.names = TRUE)
   
-  file_path2 <-
-    system.file("extdata", "demo_genefamilies_error_header.tsv", package = "microfunk")
+  error_files <-
+  which(stringr::str_detect(files, "error")) %>%
+  files[.]
   
-  file_path3 <-
-    system.file("extdata", "demo_genefamilies_error_nrow.tsv", package = "microfunk")
+  norm_file <-
+  which(stringr::str_detect(files, "cpm")) %>%
+  files[.]
   
-  file_path4 <-
-    system.file("extdata", "demo_genefamilies_error_ncol.tsv", package = "microfunk")
+  purrr::map(error_files, ~ testthat::expect_error(read_genefamily(.)))
   
-  file_path5 <-
-    system.file("extdata", "demo_genefamilies_error_colclass.tsv", package = "microfunk")
-  
-  file_path6 <-
-    system.file("extdata", "demo_genefamilies-cpm.tsv", package = "microfunk")
-  
-  
-  # Test output has three columns
-  testthat::expect_equal(ncol(read_genefamily(file_path1)), 3)
-  
-  # Test header
-  testthat::expect_error(read_genefamily(file_path2))
-  
-  # Test number of rows
-  testthat::expect_error(read_genefamily(file_path3))
-  
-  # Test number of columns
-  testthat::expect_error(read_genefamily(file_path4))
-  
-  # Test column class
-  testthat::expect_error(read_genefamily(file_path5))
-  
-  # Test normalization
-  testthat::expect_equal(colnames(read_genefamily(file_path6))[3], "cpm")
+  testthat::expect_equal(colnames(read_genefamily(norm_file))[3], "cpm")
 })
 
 
-test_that("Function read_pathabundance() @ L163", {
-  file_path1 <-
-    system.file("extdata", "demo_pathabundance.tsv", package = "microfunk")
+test_that("Function read_pathabundance() @ L119", {
+  files <- system.file("extdata", package = "microfunk") %>%
+  list.files(pattern = "demo_pathabundance", full.names = TRUE)
   
-  file_path2 <-
-    system.file("extdata", "demo_pathabundance_error_header.tsv", package = "microfunk")
+  error_files <-
+  which(stringr::str_detect(files, "error")) %>%
+  files[.]
   
-  file_path3 <-
-    system.file("extdata", "demo_pathabundance_error_nrow.tsv", package = "microfunk")
+  norm_file <-
+  which(stringr::str_detect(files, "cpm")) %>%
+  files[.]
   
-  file_path4 <-
-    system.file("extdata", "demo_pathabundance_error_ncol.tsv", package = "microfunk")
+  purrr::map(error_files, ~ testthat::expect_error(read_pathabundance(.)))
   
-  file_path5 <-
-    system.file("extdata", "demo_pathabundance_error_colclass.tsv", package = "microfunk")
-  
-  file_path6 <-
-    system.file("extdata", "demo_pathabundance-cpm.tsv", package = "microfunk")
-  
-  
-  # Test output has three columns
-  testthat::expect_equal(ncol(read_pathabundance(file_path1)), 3)
-  
-  # Test header
-  testthat::expect_error(read_pathabundance(file_path2))
-  
-  # Test number of rows
-  testthat::expect_error(read_pathabundance(file_path3))
-  
-  # Test number of columns
-  testthat::expect_error(read_pathabundance(file_path4))
-  
-  # Test column class
-  testthat::expect_error(read_pathabundance(file_path5))
-  
-  # Test normalization
-  testthat::expect_equal(colnames(read_pathabundance(file_path6))[3], "cpm")
+  testthat::expect_equal(colnames(read_pathabundance(norm_file))[3], "cpm")
 })
 

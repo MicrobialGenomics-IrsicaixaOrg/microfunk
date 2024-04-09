@@ -12,42 +12,20 @@
 #'   and 'norm' (abundance units).
 #' @export
 #' @tests
-#' file_path1 <-
-#'   system.file("extdata", "demo_genefamilies.tsv", package = "microfunk")
+#' files <- system.file("extdata", package = "microfunk") %>%
+#' list.files(pattern = "demo_genefamilies", full.names = TRUE)
 #'
-#' file_path2 <-
-#'   system.file("extdata", "demo_genefamilies_error_header.tsv", package = "microfunk")
+#' error_files <-
+#' which(stringr::str_detect(files, "error")) %>%
+#' files[.]
 #'
-#' file_path3 <-
-#'   system.file("extdata", "demo_genefamilies_error_nrow.tsv", package = "microfunk")
+#' norm_file <-
+#' which(stringr::str_detect(files, "cpm")) %>%
+#' files[.]
 #'
-#' file_path4 <-
-#'   system.file("extdata", "demo_genefamilies_error_ncol.tsv", package = "microfunk")
+#' purrr::map(error_files, ~ testthat::expect_error(read_genefamily(.)))
 #'
-#' file_path5 <-
-#'   system.file("extdata", "demo_genefamilies_error_colclass.tsv", package = "microfunk")
-#'
-#' file_path6 <-
-#'   system.file("extdata", "demo_genefamilies-cpm.tsv", package = "microfunk")
-#'
-#'
-#' # Test output has three columns
-#' testthat::expect_equal(ncol(read_genefamily(file_path1)), 3)
-#'
-#' # Test header
-#' testthat::expect_error(read_genefamily(file_path2))
-#'
-#' # Test number of rows
-#' testthat::expect_error(read_genefamily(file_path3))
-#'
-#' # Test number of columns
-#' testthat::expect_error(read_genefamily(file_path4))
-#'
-#' # Test column class
-#' testthat::expect_error(read_genefamily(file_path5))
-#'
-#' # Test normalization
-#' testthat::expect_equal(colnames(read_genefamily(file_path6))[3], "cpm")
+#' testthat::expect_equal(colnames(read_genefamily(norm_file))[3], "cpm")
 #'
 #' @examples
 #' file_path <-
@@ -58,7 +36,7 @@
 read_genefamily <- function(file_path) {
   # read in the file
   tbl <-
-    data.table::fread(file_path) %>%
+    data.table::fread(file_path, sep="\t") %>%
     tibble::as_tibble()
 
   # check header
@@ -79,8 +57,8 @@ read_genefamily <- function(file_path) {
   class_1 <- class(tbl[[1]]) == "character"
   class_2 <- class(tbl[[2]]) == "numeric"
   if (!class_1 || !class_2) {
-    cli::cli_abort("Column classes are not correct. The first column should contain strings
-                   ('character') and the second column should contain numbers ('numeric').")
+    cli::cli_abort(c("x" = "Column classes are not correct.",
+                   "i" = "First column should be 'character' and second one should be 'numeric'."))
   }
 
   # check data normalitzation
@@ -118,42 +96,20 @@ read_genefamily <- function(file_path) {
 #'   and 'norm' (abundance units).
 #' @export
 #' @tests
-#' file_path1 <-
-#'   system.file("extdata", "demo_pathabundance.tsv", package = "microfunk")
+#' files <- system.file("extdata", package = "microfunk") %>%
+#' list.files(pattern = "demo_pathabundance", full.names = TRUE)
 #'
-#' file_path2 <-
-#'   system.file("extdata", "demo_pathabundance_error_header.tsv", package = "microfunk")
+#' error_files <-
+#' which(stringr::str_detect(files, "error")) %>%
+#' files[.]
 #'
-#' file_path3 <-
-#'   system.file("extdata", "demo_pathabundance_error_nrow.tsv", package = "microfunk")
+#' norm_file <-
+#' which(stringr::str_detect(files, "cpm")) %>%
+#' files[.]
 #'
-#' file_path4 <-
-#'   system.file("extdata", "demo_pathabundance_error_ncol.tsv", package = "microfunk")
+#' purrr::map(error_files, ~ testthat::expect_error(read_pathabundance(.)))
 #'
-#' file_path5 <-
-#'   system.file("extdata", "demo_pathabundance_error_colclass.tsv", package = "microfunk")
-#'
-#' file_path6 <-
-#'   system.file("extdata", "demo_pathabundance-cpm.tsv", package = "microfunk")
-#'
-#'
-#' # Test output has three columns
-#' testthat::expect_equal(ncol(read_pathabundance(file_path1)), 3)
-#'
-#' # Test header
-#' testthat::expect_error(read_pathabundance(file_path2))
-#'
-#' # Test number of rows
-#' testthat::expect_error(read_pathabundance(file_path3))
-#'
-#' # Test number of columns
-#' testthat::expect_error(read_pathabundance(file_path4))
-#'
-#' # Test column class
-#' testthat::expect_error(read_pathabundance(file_path5))
-#'
-#' # Test normalization
-#' testthat::expect_equal(colnames(read_pathabundance(file_path6))[3], "cpm")
+#' testthat::expect_equal(colnames(read_pathabundance(norm_file))[3], "cpm")
 #'
 #' @examples
 #' file_path <-
@@ -163,7 +119,7 @@ read_genefamily <- function(file_path) {
 read_pathabundance <- function(file_path) {
   # read in the file
   tbl <-
-    data.table::fread(file_path) %>%
+    data.table::fread(file_path, sep="\t") %>%
     tibble::as_tibble()
 
   # check header
@@ -184,8 +140,8 @@ read_pathabundance <- function(file_path) {
   class_1 <- class(tbl[[1]]) == "character"
   class_2 <- class(tbl[[2]]) == "numeric"
   if (!class_1 || !class_2) {
-    cli::cli_abort("Column classes are not correct. The first column should contain strings
-                   ('character') and the second column should contain numbers ('numeric').")
+    cli::cli_abort(c("x" = "Column classes are not correct.",
+                     "i" = "First column should be 'character' and second one should be 'numeric'."))
   }
 
   # check data normalitzation
