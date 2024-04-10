@@ -1,38 +1,38 @@
 #' Read HUMAnN Gene Families
 #'
-#' This function reads a HUMAnN gene family file (https://huttenhower.sph.harvard.edu/humann),
-#' which contains information about the abundance of gene families of a given sample in a .tsv format.
-#' The function performs several data validation checks, distinguishing between normalized
-#' (CPM, copies per million)and non-normalized abundance data (RPKs, reads per kilobase).
-#' It returns a modified tibble with renamed columns for easier downstream analysis.
+#' This function reads a HUMAnN gene family file
+#' (https://huttenhower.sph.harvard.edu/humann), which contains information
+#' about the abundance of gene families of a given sample in a .tsv format. The
+#' function performs several data validation checks, distinguishing between
+#' normalized (CPM, copies per million)and non-normalized abundance data (RPKs,
+#' reads per kilobase). It returns a modified tibble with renamed columns for
+#' easier downstream analysis.
 #'
 #' @param file_path A string. The path to the HUMAnN gene families file.
 #'
-#' @return A tibble of the gene families data with  three columns: 'class' (file type), 'annotation' (gene family)
-#'   and 'norm' (abundance units).
+#' @return A tibble of the gene families data with  three columns: 'class' (file
+#'   type), 'annotation' (gene family) and 'norm' (abundance units).
 #' @export
+#' @autoglobal
 #' @tests
-#' files <- system.file("extdata", package = "microfunk") %>%
-#' list.files(pattern = "demo_genefamilies", full.names = TRUE)
+#' # Test errors
+#' system.file("extdata", package = "microfunk") %>%
+#'   list.files(pattern = "demo_genefamilies_error", full.names = TRUE) %>%
+#'   purrr::walk(~ testthat::expect_error(read_genefamily(.x)))
 #'
-#' error_files <-
-#' which(stringr::str_detect(files, "error")) %>%
-#' files[.]
-#'
+#' # Test normal file
 #' norm_file <-
-#' which(stringr::str_detect(files, "cpm")) %>%
-#' files[.]
+#'  system.file("extdata", package = "microfunk") %>%
+#'  list.files(pattern = "demo_genefamilies-cpm", full.names = TRUE) %>%
+#'  read_genefamily()
 #'
-#' purrr::map(error_files, ~ testthat::expect_error(read_genefamily(.)))
-#'
-#' testthat::expect_equal(colnames(read_genefamily(norm_file))[3], "cpm")
+#' testthat::expect_equal(colnames(norm_file)[3], "cpm")
 #'
 #' @examples
 #' file_path <-
 #'   system.file("extdata", "demo_genefamilies.tsv", package = "microfunk")
 #'
 #' gfam <- read_genefamily(file_path)
-
 read_genefamily <- function(file_path) {
   # read in the file
   tbl <-
@@ -95,22 +95,20 @@ read_genefamily <- function(file_path) {
 #' @return A tibble of the pathway abundance data with  three columns: 'class' (file type), 'annotation' (pathway)
 #'   and 'norm' (abundance units).
 #' @export
-#' @tests
-#' files <- system.file("extdata", package = "microfunk") %>%
-#' list.files(pattern = "demo_pathabundance", full.names = TRUE)
+#' @autoglobal
+#' @examples
+#' # Test errors
+#' system.file("extdata", package = "microfunk") %>%
+#'   list.files(pattern = "demo_pathabundance_error", full.names = TRUE) %>%
+#'   purrr::walk(~ testthat::expect_error(read_pathabundance(.x)))
 #'
-#' error_files <-
-#' which(stringr::str_detect(files, "error")) %>%
-#' files[.]
-#'
+#' # Test normal file
 #' norm_file <-
-#' which(stringr::str_detect(files, "cpm")) %>%
-#' files[.]
+#'  system.file("extdata", package = "microfunk") %>%
+#'  list.files(pattern = "demo_pathabundance-cpm", full.names = TRUE) %>%
+#'  read_pathabundance()
 #'
-#' purrr::map(error_files, ~ testthat::expect_error(read_pathabundance(.)))
-#'
-#' testthat::expect_equal(colnames(read_pathabundance(norm_file))[3], "cpm")
-#'
+#' testthat::expect_equal(colnames(norm_file)[3], "cpm")
 #' @examples
 #' file_path <-
 #'   system.file("extdata", "demo_pathabundance.tsv", package = "microfunk")

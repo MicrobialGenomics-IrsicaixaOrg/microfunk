@@ -20,7 +20,7 @@ read_humann <- function(dir, gene_pattern, path_pattern) {
   path_data <- purrr::map_dfr(path_files, read_pathabundance)
 
   # merge into a single tibble
-  data <- bind_rows(gene_data, path_data)
+  data <- dplyr::bind_rows(gene_data, path_data)
 
   data
 

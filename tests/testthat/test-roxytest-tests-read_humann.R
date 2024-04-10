@@ -3,37 +3,17 @@
 # File R/read_humann.R: @tests
 
 test_that("Function read_genefamily() @ L36", {
-  files <- system.file("extdata", package = "microfunk") %>%
-  list.files(pattern = "demo_genefamilies", full.names = TRUE)
+  # Test errors
+  system.file("extdata", package = "microfunk") %>%
+    list.files(pattern = "demo_genefamilies_error", full.names = TRUE) %>%
+    purrr::walk(~ testthat::expect_error(read_genefamily(.x)))
   
-  error_files <-
-  which(stringr::str_detect(files, "error")) %>%
-  files[.]
-  
+  # Test normal file
   norm_file <-
-  which(stringr::str_detect(files, "cpm")) %>%
-  files[.]
+   system.file("extdata", package = "microfunk") %>%
+   list.files(pattern = "demo_genefamilies-cpm", full.names = TRUE) %>%
+   read_genefamily()
   
-  purrr::map(error_files, ~ testthat::expect_error(read_genefamily(.)))
-  
-  testthat::expect_equal(colnames(read_genefamily(norm_file))[3], "cpm")
-})
-
-
-test_that("Function read_pathabundance() @ L119", {
-  files <- system.file("extdata", package = "microfunk") %>%
-  list.files(pattern = "demo_pathabundance", full.names = TRUE)
-  
-  error_files <-
-  which(stringr::str_detect(files, "error")) %>%
-  files[.]
-  
-  norm_file <-
-  which(stringr::str_detect(files, "cpm")) %>%
-  files[.]
-  
-  purrr::map(error_files, ~ testthat::expect_error(read_pathabundance(.)))
-  
-  testthat::expect_equal(colnames(read_pathabundance(norm_file))[3], "cpm")
+  testthat::expect_equal(colnames(norm_file)[3], "cpm")
 })
 

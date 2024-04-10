@@ -21,6 +21,18 @@ in a .tsv format. The function performs several data validation checks, distingu
 It returns a modified tibble with renamed columns for easier downstream analysis.
 }
 \examples{
+# Test errors
+system.file("extdata", package = "microfunk") \%>\%
+  list.files(pattern = "demo_pathabundance_error", full.names = TRUE) \%>\%
+  purrr::walk(~ testthat::expect_error(read_pathabundance(.x)))
+
+# Test normal file
+norm_file <-
+ system.file("extdata", package = "microfunk") \%>\%
+ list.files(pattern = "demo_pathabundance-cpm", full.names = TRUE) \%>\%
+ read_pathabundance()
+
+testthat::expect_equal(colnames(norm_file)[3], "cpm")
 file_path <-
   system.file("extdata", "demo_pathabundance.tsv", package = "microfunk")
 
