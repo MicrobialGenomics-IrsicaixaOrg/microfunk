@@ -10,15 +10,17 @@ read_genefamily(file_path)
 \item{file_path}{A string. The path to the HUMAnN gene families file.}
 }
 \value{
-A tibble of the gene families data with  three columns: 'class' (file type), 'annotation' (gene family)
-and 'norm' (abundance units).
+A tibble of the gene families data with  three columns: 'class' (file
+type), 'annotation' (gene family) and 'norm' (abundance units).
 }
 \description{
-This function reads a HUMAnN gene family file (https://huttenhower.sph.harvard.edu/humann),
-which contains information about the abundance of gene families of a given sample in a .tsv format.
-The function performs several data validation checks, distinguishing between normalized
-(CPM, copies per million)and non-normalized abundance data (RPKs, reads per kilobase).
-It returns a modified tibble with renamed columns for easier downstream analysis.
+This function reads a HUMAnN gene family file
+(https://huttenhower.sph.harvard.edu/humann), which contains information
+about the abundance of gene families of a given sample in a .tsv format. The
+function performs several data validation checks, distinguishing between
+normalized (CPM, copies per million)and non-normalized abundance data (RPKs,
+reads per kilobase). It returns a modified tibble with renamed columns for
+easier downstream analysis.
 }
 \examples{
 file_path <-
