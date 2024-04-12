@@ -33,7 +33,10 @@ Imports:
     cli,
     data.table,
     dplyr,
+    gtools,
     magrittr,
     purrr,
+    readr,
     stringr,
+    SummarizedExperiment,
     tibble
