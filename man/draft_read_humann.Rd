@@ -12,17 +12,21 @@ draft_read_humann(file_path, metadata)
 \item{metadata}{A CSV file containing sample information.}
 }
 \value{
-A list containing two SummarizedExperiment objects: one for groups and one for stratifications.
+A list containing two SummarizedExperiment objects: one for groups
+and one for stratifications.
 }
 \description{
-This function reads an output file from HUMAnN3 and creates SummarizedExperiment objects
-containing normalized abundance values for groups (gene families or pathway categories)
-and stratifications (breakdown of groups by species).
+This function reads an output file from HUMAnN3 and creates
+SummarizedExperiment objects containing normalized abundance values for
+groups (gene families or pathway categories) and stratifications (breakdown
+of groups by species).
 }
 \examples{
+# Def data paths
+metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
 file_path <-
   system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
-metadata <-
-  system.file("extdata", "ex_meta.csv", package = "microfunk")
+
+# Read HUMAnN3
 draft_read_humann(file_path, metadata)
 }

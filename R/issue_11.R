@@ -12,7 +12,6 @@
 #'   and one for stratifications.
 #'
 #' @export
-#'
 #' @examples
 #' # Def data paths
 #' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
@@ -27,13 +26,17 @@ draft_read_humann <- function(file_path, metadata){
   .humann_path_checks(file_path, metadata)
 
   # read file
-  tbl <- data.table::fread(file_path, sep = "\t") %>% tibble::as_tibble()
+  tbl <-
+    data.table::fread(file_path, sep = "\t") %>%
+    tibble::as_tibble()
 
   # check humann tbl
   .humann_tbl_checks(tbl)
 
   # change column names
-  tbl <- dplyr::rename_with(tbl, ~ stringr::str_remove(., "_Abundance.*$"))
+  tbl <-
+    dplyr::rename_with(tbl, ~ stringr::str_remove(., "_Abundance.*$")) %>%
+    dplyr::rename("function_id" = 1)
 
   # check data normalization
   norm_method <- .extract_norm_method(tbl)
@@ -51,7 +54,7 @@ draft_read_humann <- function(file_path, metadata){
 
   # reorder by id
   tbl <- tbl %>%
-    dplyr::select(1, rownames(m_data)) %>%
+    dplyr::select(function_id, rownames(m_data)) %>%
     data.frame(row.names = 1)
 
   # create SE object
@@ -71,7 +74,7 @@ draft_read_humann <- function(file_path, metadata){
   if (!file.exists(file_path)) { cli::cli_abort(c("x" = "File does not exist")) }
 
   # check metadata input
-  if (tools::file_ext(metadata) != "csv"){
+  if (!stringr::str_detect(metadata, ".csv$")) {
     cli::cli_abort(c(
       "x" = "Unsupported metadata file extension.",
       "i" = "Please provide a CSV file."
@@ -107,7 +110,7 @@ draft_read_humann <- function(file_path, metadata){
 
   # check column classes
   class_1 <- class(humann_tbl[[1]]) == "character"
-  class_2 <- purrr::map_lgl(tbl[-1], ~ class(.x) == "numeric") %>% unname()
+  class_2 <- purrr::map_lgl(humann_tbl[-1], ~ class(.x) == "numeric") %>% unname()
 
   if (!class_1 || !all(class_2)) {
     cli::cli_abort(c(
@@ -120,7 +123,7 @@ draft_read_humann <- function(file_path, metadata){
 .extract_norm_method <- function(tbl) {
   # check data normalization
   sum_counts <-
-    dplyr::filter(tbl, !stringr::str_detect(.data[[header]],"[|]")) %>%
+    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
     dplyr::select(-1) %>%
     colSums()
 
@@ -142,16 +145,17 @@ draft_read_humann <- function(file_path, metadata){
 .rpk2cpm <- function(tbl) {
   # scale by cat
   tbl_group <-
-    dplyr::filter(tbl, !stringr::str_detect(.data[[header]],"[|]")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ . / sum(.) * 1e3))
+    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
+    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x) * 1e3))
 
   # scale by strat
   tbl_strat <-
-    dplyr::filter(tbl, stringr::str_detect(.data[[header]], "[|]|UNMAPPED")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ . / sum(.) * 1e3))
+    dplyr::filter(tbl, stringr::str_detect(function_id, "[|]|UNMAPPED")) %>%
+    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x) * 1e3))
 
   dplyr::bind_rows(tbl_group, tbl_strat) %>%
-    dplyr::arrange(stringr::str_remove_all(`# Gene Family`, "[|].*"))
+    dplyr::arrange(function_id) %>%
+    dplyr::distinct(function_id, .keep_all = TRUE)
 }
 
 .humann_metadata_check <- function(meta_df, humann_tbl) {
@@ -167,7 +171,6 @@ draft_read_humann <- function(file_path, metadata){
   if (!all(meta_df[[1]] %in% names(humann_tbl))) {
     cli::cli_abort(c("x" = "Sample names in assay and metadata do not match."))
   }
-
 
   meta_df
 }
