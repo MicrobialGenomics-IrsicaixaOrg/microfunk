@@ -2,18 +2,54 @@
 
 # File R/read_humann.R: @tests
 
-test_that("Function read_genefamily() @ L36", {
-  # Test errors
+test_that("Function read_humann() @ L54", {
+  file_c <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+  metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+  file_r <- system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk")
+  
+  # Test metadata errors
   system.file("extdata", package = "microfunk") %>%
-    list.files(pattern = "demo_genefamilies_error", full.names = TRUE) %>%
-    purrr::walk(~ testthat::expect_error(read_genefamily(.x)))
+   list.files(pattern = "ex_meta_error", full.names = TRUE) %>%
+   purrr::walk(~ testthat::expect_error(read_humann(file_c, .x)))
   
-  # Test normal file
-  norm_file <-
+   # Test HUMAnN3 file errors
    system.file("extdata", package = "microfunk") %>%
-   list.files(pattern = "demo_genefamilies-cpm", full.names = TRUE) %>%
-   read_genefamily()
+     list.files(pattern = "All_genefam_cpm_kegg_error", full.names = TRUE) %>%
+     purrr::walk(~ testthat::expect_error(read_humann(.x, metadata)))
   
-  testthat::expect_equal(colnames(norm_file)[3], "cpm")
+   # Test output
+   testthat::expect_equal(class(read_humann(file_r, metadata))[1], "SummarizedExperiment")
+})
+
+
+test_that("Function .humann_path_checks() @ L119", {
+  nfile <- system.file("extdata", "nfile", package = "microfunk")
+  meta <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+  file <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+  
+  testthat::expect_error(.humann_path_checks(, meta))
+  testthat::expect_error(.humann_path_checks(file, ))
+  testthat::expect_error(.humann_path_checks(nfile, meta))
+})
+
+
+test_that("Function .rpk2cpm() @ L250", {
+  # Input tibble
+  column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2",
+  "FIRST", "FIRST|Species1")
+  column2 <- c(20, 100, 90, 10, 5, 5)
+  input_tbl <- tibble::tibble(
+   function_id = column1,
+   sample1 = column2,
+   sample2 = column2 )
+  
+  column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
+  column2 <- c(40, 40, 800, 720, 80, 160)
+  output_tbl <- tibble::tibble(
+   function_id = column1,
+   sample1 = column2,
+   sample2 = column2 )
+  
+   testthat::expect_equal(.rpk2cpm(input_tbl), output_tbl)
 })
 
