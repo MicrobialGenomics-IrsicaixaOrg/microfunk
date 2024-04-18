@@ -36,4 +36,5 @@ Imports:
     magrittr,
     purrr,
     stringr,
+    SummarizedExperiment,
     tibble
