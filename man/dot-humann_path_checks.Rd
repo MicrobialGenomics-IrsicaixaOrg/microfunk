@@ -12,8 +12,8 @@
 \item{metadata}{Path to the metadata CSV file.}
 }
 \value{
-'NULL' if input paths pass the checks. If any issue is found, an error
-is raised.
+'NULL' if input paths pass the checks. If any issue is found, an
+error is raised.
 }
 \description{
 This function checks that input paths of the HUMAnN3 output file and metadata

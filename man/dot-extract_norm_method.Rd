@@ -10,7 +10,8 @@
 \item{tbl}{A tibble containing the data from the HUMAnN3 output file.}
 }
 \value{
-A character string indicating the normalization method ('cpm' or 'rpk').
+A character string indicating the normalization method ('cpm' or
+'rpk').
 }
 \description{
 This function determines if abundance data for each sample is in RPK units

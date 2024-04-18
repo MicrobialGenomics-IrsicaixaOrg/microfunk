@@ -1,51 +1,59 @@
 #' Read HUMAnN3 output file and create SummarizedExperiment objects
 #'
-#' This function reads a HUMAnN3 output file (https://huttenhower.sph.harvard.edu/humann),
-#' which contains information about the abundance of gene families or metabolic
-#' pathways of a given sample in a TSV format. The function performs several
-#' checks on the structure and content of the file and normalizes the data from
-#' RPK units (reads per kilobase) to CPM units (copies per million) if needed.
-#' It also reads and validates the metadata CSV file, ensuring it contains the
-#' required information and matching sample IDs to the provided TSV data file.
-#' Finally, it creates a SummarizedExperiment object
+#' This function reads a HUMAnN3 output file
+#' (https://huttenhower.sph.harvard.edu/humann), which contains information
+#' about the abundance of gene families or metabolic pathways of a given sample
+#' in a TSV format. The function performs several checks on the structure and
+#' content of the file and normalizes the data from RPK units (reads per
+#' kilobase) to CPM units (copies per million) if needed. It also reads and
+#' validates the metadata CSV file, ensuring it contains the required
+#' information and matching sample IDs to the provided TSV data file. Finally,
+#' it creates a SummarizedExperiment object
 #' (https://bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-#' containing normalized gene/ pathway abundance values as the assay and metadata
-#' as the column data.
+#' containing normalized gene/ pathway abundance values as the assay and
+#' metadata as the column data.
 #'
 #' @param file_path Path to the HUMAnN3 output (gene families or pathway)
-#'                  collapsed TSV file. The file should contain aggregated
-#'                  abundance data across multiple samples. Each row represents
-#'                  a unique functional category (gene family / pathway) and each
-#'                  column corresponds to a sample.
-#' @param metadata Path to the CSV file containing sample IDs and additional information,
-#'                 where each row corresponds to a sample and each column
-#'                 represents a specific annotation associated with that sample.
+#'   collapsed TSV file. The file should contain aggregated abundance data
+#'   across multiple samples. Each row represents a unique functional category
+#'   (gene family / pathway) and each column corresponds to a sample.
+#' @param metadata Path to the CSV file containing sample IDs and additional
+#'   information, where each row corresponds to a sample and each column
+#'   represents a specific annotation associated with that sample.
 #'
 #' @return A SummarizedExperiment object containing normalized abundance values
-#'         as the assay and metadata as the column data.
+#'   as the assay and metadata as the column data.
 #' @export
 #' @autoglobal
 #' @tests
-#' file_c <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
-#' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
-#' file_r <- system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk")
+#' file_c <-
+#'   system.file("extdata", "All_genefam_cpm_kegg.tsv", package =
+#'   "microfunk")
+#' metadata <-
+#'   system.file("extdata", "ex_meta.csv", package =
+#'   "microfunk")
+#' file_r <-
+#'   system.file("extdata", "All_genefam_rpk_kegg.tsv",
+#'   package = "microfunk")
 #'
 #' # Test metadata errors
 #' system.file("extdata", package = "microfunk") %>%
-#'  list.files(pattern = "ex_meta_error", full.names = TRUE) %>%
-#'  purrr::walk(~ testthat::expect_error(read_humann(file_c, .x)))
+#'   list.files(pattern = "ex_meta_error", full.names = TRUE) %>%
+#'   purrr::walk(~testthat::expect_error(read_humann(file_c, .x)))
 #'
-#'  # Test HUMAnN3 file errors
-#'  system.file("extdata", package = "microfunk") %>%
-#'    list.files(pattern = "All_genefam_cpm_kegg_error", full.names = TRUE) %>%
-#'    purrr::walk(~ testthat::expect_error(read_humann(.x, metadata)))
+#' # Test HUMAnN3 file errors
+#' system.file("extdata", package = "microfunk") %>%
+#'   list.files(pattern = "All_genefam_cpm_kegg_error", full.names = TRUE) %>%
+#'   purrr::walk(~ testthat::expect_error(read_humann(.x, metadata)))
 #'
-#'  # Test output
-#'  testthat::expect_equal(class(read_humann(file_r, metadata))[1], "SummarizedExperiment")
-
+#' # Test output
+#' testthat::expect_equal(class(read_humann(file_r, metadata))[1],
+#'   "SummarizedExperiment")
+#'
 #' @examples
 #' # Def data paths
-#' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+#' metadata <-
+#'   system.file("extdata", "ex_meta.csv", package = "microfunk")
 #' file_path <-
 #'   system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
 #'
@@ -104,18 +112,21 @@ read_humann <- function(file_path, metadata){
 #' @param file_path Path to the HUMAnN3 output TSV file.
 #' @param metadata Path to the metadata CSV file.
 #'
-#' @return 'NULL' if input paths pass the checks. If any issue is found, an error
-#'          is raised.
+#' @return 'NULL' if input paths pass the checks. If any issue is found, an
+#'   error is raised.
 #' @keywords internal
-#' @tests
-#' nfile <- system.file("extdata", "nfile", package = "microfunk")
-#' meta <- system.file("extdata", "ex_meta.csv", package = "microfunk")
-#' file <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
-#'
-#' testthat::expect_error(.humann_path_checks(, meta))
-#' testthat::expect_error(.humann_path_checks(file, ))
-#' testthat::expect_error(.humann_path_checks(nfile, meta))
 #' @autoglobal
+#' @tests
+#' nfile <-
+#'   system.file("extdata", "nfile", package = "microfunk")
+#' meta <-
+#'   system.file("extdata", "ex_meta.csv", package = "microfunk")
+#' file <-
+#'   system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+#'
+#' testthat::expect_error(.humann_path_checks(metadata = meta))
+#' testthat::expect_error(.humann_path_checks(file))
+#' testthat::expect_error(.humann_path_checks(nfile, meta))
 .humann_path_checks <- function(file_path, metadata) {
   # check input
   if (missing(file_path)) { cli::cli_abort(c("x" = "File path is missing")) }
@@ -137,7 +148,8 @@ read_humann <- function(file_path, metadata){
 #'
 #' This function performs several checks on the tibble: its abundance values
 #' correspond to either '# Gene Family' or '# Pathway', it is not empty, it
-#' contains at least two samples and column classes (character/numeric) are correct.
+#' contains at least two samples and column classes (character/numeric) are
+#' correct.
 #'
 #' @param humann_tbl A tibble containing the data from the HUMAnN3 output file.
 #'
@@ -190,7 +202,8 @@ read_humann <- function(file_path, metadata){
 #'
 #' @param tbl A tibble containing the data from the HUMAnN3 output file.
 #'
-#' @return A character string indicating the normalization method ('cpm' or 'rpk').
+#' @return A character string indicating the normalization method ('cpm' or
+#'   'rpk').
 #' @keywords internal
 #' @autoglobal
 .extract_norm_method <- function(tbl) {
@@ -227,26 +240,25 @@ read_humann <- function(file_path, metadata){
 #'
 #' @return A tibble with the abundance data converted from RPK to CPM.
 #' @keywords internal
+#' @autoglobal
 #' @tests
 #' # Input tibble
-#' column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2",
-#' "FIRST", "FIRST|Species1")
+#' column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
 #' column2 <- c(20, 100, 90, 10, 5, 5)
 #' input_tbl <- tibble::tibble(
-#'  function_id = column1,
-#'  sample1 = column2,
-#'  sample2 = column2 )
+#'   function_id = column1,
+#'   sample1 = column2,
+#'   sample2 = column2 )
 #'
-# # Expected output tibble
+#' # Expected output tibble
 #' column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
 #' column2 <- c(40, 40, 800, 720, 80, 160)
 #' output_tbl <- tibble::tibble(
-#'  function_id = column1,
-#'  sample1 = column2,
-#'  sample2 = column2 )
+#'   function_id = column1,
+#'   sample1 = column2,
+#'   sample2 = column2 )
 #'
-#'  testthat::expect_equal(.rpk2cpm(input_tbl), output_tbl)
-#' @autoglobal
+#' testthat::expect_equal(.rpk2cpm(input_tbl), output_tbl)
 .rpk2cpm <- function(tbl) {
   # scale by cat
   tbl_group <-
@@ -272,7 +284,7 @@ read_humann <- function(file_path, metadata){
 #' @param meta_df A tibble containing sample metadata.
 #' @param humann_tbl A tibble containing the data from the HUMAnN3 output file.
 #'
-#' @return The input metadata tibble if all checks pass
+#' @return The input metadata tibble if all checks pass.
 #' @keywords internal
 #' @autoglobal
 .humann_metadata_check <- function(meta_df, humann_tbl) {
@@ -285,12 +297,13 @@ read_humann <- function(file_path, metadata){
   }
 
   # check sample ids
+  if (length(meta_df[[1]]) != length(names(humann_tbl)[-1])) {
+    cli::cli_abort(c("x" = "Different number of samples in assay and metadata."))
+  }
   if (!all(meta_df[[1]] %in% names(humann_tbl))) {
     cli::cli_abort(c("x" = "Sample names in assay and metadata do not match."))
   }
 
   meta_df
 }
-
-
 

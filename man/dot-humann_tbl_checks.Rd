@@ -15,6 +15,7 @@
 \description{
 This function performs several checks on the tibble: its abundance values
 correspond to either '# Gene Family' or '# Pathway', it is not empty, it
-contains at least two samples and column classes (character/numeric) are correct.
+contains at least two samples and column classes (character/numeric) are
+correct.
 }
 \keyword{internal}

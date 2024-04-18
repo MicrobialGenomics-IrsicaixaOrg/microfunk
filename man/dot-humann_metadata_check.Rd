@@ -12,7 +12,7 @@
 \item{humann_tbl}{A tibble containing the data from the HUMAnN3 output file.}
 }
 \value{
-The input metadata tibble if all checks pass
+The input metadata tibble if all checks pass.
 }
 \description{
 This function verifies the consistency of the provided metadata with the
