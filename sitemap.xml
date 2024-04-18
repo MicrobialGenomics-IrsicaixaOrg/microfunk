@@ -16,15 +16,27 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/dot-extract_norm_method.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-humann_metadata_check.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-humann_path_checks.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-humann_tbl_checks.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-rpk2cpm.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
     <loc>/reference/pipe.html</loc>
   </url>
   <url>
-    <loc>/reference/read_genefamily.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_pathabundance.html</loc>
+    <loc>/reference/read_humann.html</loc>
   </url>
 </urlset>
