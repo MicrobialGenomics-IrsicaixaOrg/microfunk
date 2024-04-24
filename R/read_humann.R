@@ -98,7 +98,7 @@ read_humann <- function(file_path, metadata){
 
   # create SE object
   SummarizedExperiment::SummarizedExperiment(
-    assays = tbl,
+    assays = list(humann = tbl),
     colData = m_data
   )
 }
