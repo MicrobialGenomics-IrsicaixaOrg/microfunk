@@ -102,13 +102,11 @@ output folder to store created files and returns the result of the analysis
 on the console.
 }
 \examples{
-# Def data paths
-metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
-file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
+# Read HUMAnN3 & MaAsLin2 Analysis
+da_result <- read_humann(
+  file_path = system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk"),
+  metadata = system.file("extdata", "reduced_meta.csv", package = "microfunk")
+) \%>\% run_maaslin2(fixed_effects = "ARM")
 
-# Read HUMAnN3
-result <- read_humann(file_path, metadata)
-
-# MaAsLin2 Analysis
-run_maaslin2(se = result, fixed_effects = "ARM")
+da_result
 }

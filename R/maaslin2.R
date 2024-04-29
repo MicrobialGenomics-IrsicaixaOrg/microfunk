@@ -55,43 +55,42 @@
 #' @tests
 #' # Def data paths
 #' metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
-#' file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
+#' file_path <-
+#'   system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
 #'
-#' # Read HUMAnN3
-#' result <- read_humann(file_path, metadata)
-#'
-#' # MaAsLin2 Analysis
-#' run_maaslin2(se = result, fixed_effects = "ARM")
+#' # Read HUMAnN3 & MaAsLin2 Analysis
+#' da_result <-
+#'   read_humann(file_path, metadata) %>%
+#'   run_maaslin2(fixed_effects = "ARM")
 #'
 #' # Test number of significant associations
-#' output <- paste0(tempdir(), "/output_folder/significant_results.tsv") %>%
-#'  data.table::fread() %>%
-#'  tibble::as_tibble()
-#'
-#' testthat::expect_equal(nrow(output), 5)
+#' da_result$results %>%
+#'   dplyr::filter(qval < 0.25) %>%
+#'   nrow() %>%
+#'   testthat::expect_equal(5)
 #'
 #' # Test P-values
-#' pval <- output %>%
-#'  dplyr::select(pval) %>%
-#'  colSums()
-#' testthat::expect_equal(as.numeric(round(pval, 5)), 0.00032)
+#' da_result$results %>%
+#'   dplyr::pull(pval) %>%
+#'   mean() %>%
+#'   round(3) %>%
+#'   testthat::expect_equal(0.581)
 #'
 #' # Test Q-values
-#' qval <- output %>%
-#'  dplyr::select(qval) %>%
-#'  colSums()
-#' testthat::expect_equal(as.numeric(round(qval, 2)), 0.35)
+#' da_result$results %>%
+#'   dplyr::pull(qval) %>%
+#'   mean() %>%
+#'   round(3) %>%
+#'   testthat::expect_equal(0.944)
 #'
 #' @examples
-#' # Def data paths
-#' metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
-#' file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
+#' # Read HUMAnN3 & MaAsLin2 Analysis
+#' da_result <- read_humann(
+#'   file_path = system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk"),
+#'   metadata = system.file("extdata", "reduced_meta.csv", package = "microfunk")
+#' ) %>% run_maaslin2(fixed_effects = "ARM")
 #'
-#' # Read HUMAnN3
-#' result <- read_humann(file_path, metadata)
-#'
-#' # MaAsLin2 Analysis
-#' run_maaslin2(se = result, fixed_effects = "ARM")
+#' da_result
 run_maaslin2 <- function(se,
                          output = paste0(tempdir(), "/output_folder"),
                          min_abundance = 0.0,
@@ -111,42 +110,42 @@ run_maaslin2 <- function(se,
                          max_pngs = 10,
                          save_scatter = FALSE,
                          save_models = FALSE,
-                         reference = NULL)
-{
+                         reference = NULL) {
 
   # Retrieve tbls from SE object
   input_meta <- SummarizedExperiment::colData(se) %>% as.data.frame()
 
-  data <-
-    SummarizedExperiment::assays(se)$humann %>%
-    tibble::as_tibble(rownames = "function_id")
-
   # Filter input data
-  input_group <- data %>%
+  input_group <-
+    SummarizedExperiment::assays(se)$humann %>%
+    tibble::as_tibble(rownames = "function_id") %>%
     dplyr::filter(!stringr::str_detect(function_id, "[|]")) %>%
     tibble::column_to_rownames(var = "function_id")
 
-  .maaslin2_quietly(input_group = input_group,
-                    input_meta = input_meta,
-                    output = output,
-                    min_abundance = min_abundance,
-                    min_prevalence = min_prevalence,
-                    min_variance = min_variance,
-                    normalization = normalization,
-                    transform = transform,
-                    analysis_method = analysis_method,
-                    max_significance = max_significance,
-                    random_effects = random_effects,
-                    fixed_effects = fixed_effects,
-                    correction = correction,
-                    standardize = standardize,
-                    plot_heatmap = plot_heatmap,
-                    heatmap_first_n = heatmap_firt_n,
-                    plot_scatter = plot_scatter,
-                    max_pngs = max_pngs,
-                    save_scatter = save_scatter,
-                    save_models = save_models,
-                    reference = reference)
+  # Run quietly MaAsLin2 analysis
+  .maaslin2_quietly(
+    input_group = input_group,
+    input_meta = input_meta,
+    output = output,
+    min_abundance = min_abundance,
+    min_prevalence = min_prevalence,
+    min_variance = min_variance,
+    normalization = normalization,
+    transform = transform,
+    analysis_method = analysis_method,
+    max_significance = max_significance,
+    random_effects = random_effects,
+    fixed_effects = fixed_effects,
+    correction = correction,
+    standardize = standardize,
+    plot_heatmap = plot_heatmap,
+    heatmap_first_n = heatmap_firt_n,
+    plot_scatter = plot_scatter,
+    max_pngs = max_pngs,
+    save_scatter = save_scatter,
+    save_models = save_models,
+    reference = reference
+  )
 }
 
 #' Internal Function to Perform MaAsLin2 Analysis Quietly
@@ -224,7 +223,7 @@ run_maaslin2 <- function(se,
                                max_pngs,
                                save_scatter,
                                save_models,
-                               reference){
+                               reference) {
 
   f_quietly <- function(input_group = input_group,
                         input_meta = input_meta,
@@ -246,8 +245,7 @@ run_maaslin2 <- function(se,
                         max_pngs = max_pngs,
                         save_scatter = save_scatter,
                         save_models = save_models,
-                        reference = reference){
-
+                        reference = reference) {
 
     # Run MaAsLin2 analysis
     fit_data <- Maaslin2::Maaslin2(
@@ -293,12 +291,4 @@ run_maaslin2 <- function(se,
     save_models = save_models,
     reference = reference
   )$result
-
 }
-
-
-
-
-
-
-

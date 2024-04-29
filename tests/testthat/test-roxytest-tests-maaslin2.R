@@ -2,34 +2,35 @@
 
 # File R/maaslin2.R: @tests
 
-test_that("Function run_maaslin2() @ L95", {
+test_that("Function run_maaslin2() @ L94", {
   # Def data paths
   metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
-  file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
+  file_path <-
+    system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
   
-  # Read HUMAnN3
-  result <- read_humann(file_path, metadata)
-  
-  # MaAsLin2 Analysis
-  run_maaslin2(se = result, fixed_effects = "ARM")
+  # Read HUMAnN3 & MaAsLin2 Analysis
+  da_result <-
+    read_humann(file_path, metadata) %>%
+    run_maaslin2(fixed_effects = "ARM")
   
   # Test number of significant associations
-  output <- paste0(tempdir(), "/output_folder/significant_results.tsv") %>%
-   data.table::fread() %>%
-   tibble::as_tibble()
-  
-  testthat::expect_equal(nrow(output), 5)
+  da_result$results %>%
+    dplyr::filter(qval < 0.25) %>%
+    nrow() %>%
+    testthat::expect_equal(5)
   
   # Test P-values
-  pval <- output %>%
-   dplyr::select(pval) %>%
-   colSums()
-  testthat::expect_equal(as.numeric(round(pval, 5)), 0.00032)
+  da_result$results %>%
+    dplyr::pull(pval) %>%
+    mean() %>%
+    round(3) %>%
+    testthat::expect_equal(0.581)
   
   # Test Q-values
-  qval <- output %>%
-   dplyr::select(qval) %>%
-   colSums()
-  testthat::expect_equal(as.numeric(round(qval, 2)), 0.35)
+  da_result$results %>%
+    dplyr::pull(qval) %>%
+    mean() %>%
+    round(3) %>%
+    testthat::expect_equal(0.944)
 })
 
