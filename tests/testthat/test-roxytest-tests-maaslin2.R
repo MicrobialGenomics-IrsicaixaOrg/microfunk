@@ -2,38 +2,16 @@
 
 # File R/maaslin2.R: @tests
 
-test_that("Function run_maaslin2() @ L140", {
+test_that("Function run_maaslin2() @ L95", {
   # Def data paths
-  metadata <-
-    system.file("extdata", "reduced_meta.csv", package = "microfunk")
-  file_path <-
-    system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
+  metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
+  file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
   
   # Read HUMAnN3
   result <- read_humann(file_path, metadata)
   
   # MaAsLin2 Analysis
-  run_maaslin2(result,
-               output = paste0(tempdir(), "/output_folder"),
-               min_abundance = 0.0,
-               min_prevalence = 0.1,
-               min_variance = 0.0,
-               normalization = "NONE",
-               transform = "NONE",
-               analysis_method = "LM",
-               max_significance = 0.25,
-               random_effects = NULL,
-               fixed_effects = "ARM",
-               correction = "BH",
-               standardize = TRUE,
-               plot_heatmap = TRUE,
-               heatmap_first_n = 50,
-               plot_scatter = TRUE,
-               max_pngs = 10,
-               save_scatter = FALSE,
-               save_models = FALSE,
-               reference = "Placebo"
-                )
+  run_maaslin2(se = result, fixed_effects = "ARM")
   
   # Test number of significant associations
   output <- paste0(tempdir(), "/output_folder/significant_results.tsv") %>%
