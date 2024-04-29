@@ -2,4 +2,5 @@
 
 export("%>%")
 export(read_humann)
+export(run_maaslin2)
 importFrom(magrittr,"%>%")

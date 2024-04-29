@@ -33,6 +33,7 @@ Imports:
     cli,
     data.table,
     dplyr,
+    Maaslin2,
     magrittr,
     purrr,
     stringr,
