@@ -1,0 +1,87 @@
+#' Volcano Plot
+#'
+#' @param da_result
+#'
+#' @return A volcano plot
+#' @export
+#'
+#' @examples
+#' # Def data paths
+#' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+#' file_path <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+#'
+#' # Read HUMAnN3 & MaAsLin2 Analysis
+#' da_result <-
+#'   read_humann(file_path, metadata) %>%
+#'   run_maaslin2(fixed_effects = "ARM")
+#'
+#' # Volcano Plot
+#' plt_volcano(da_result)
+plt_volcano <- function(da_result){
+
+  # Convert results to tibble
+  plt_df <- da_result$results %>% tibble::as_tibble()
+
+  # Exclude top and bottom 1% of values
+  lower <- quantile(plt_df$coef, 0.01)
+  upper <- quantile(plt_df$coef, 0.99)
+
+  # Set symmetry around zero
+  max_value <- max(abs(lower), abs(upper))
+
+  # Volcano plot
+  plt_df %>%
+    ggplot2::ggplot(mapping = aes(x = coef, y = -log10(pval))) +
+
+    # Add points
+    geom_point(
+      aes(shape = factor(ifelse(qval < 0.05, "s", "n")),
+          color = factor(ifelse(qval > 0.05, "n",
+                                ifelse(coef > 0, "pos", "neg")))
+      )) +
+
+    # Set x-axis limits
+    xlim(-max_value, max_value) +
+
+    # Color according to q-value and coef
+    scale_color_manual(values =
+                         c("pos" = "brown1", "neg" = "cornflowerblue",
+                           "n" = "grey"),
+                       labels = c("pos" = "Positive", "neg" = "Negative",
+                                  "n" = "Not significant")) +
+
+    # Point shape according to q-value
+    scale_shape_manual(values = c("s" = 20, "n" = 46),
+                       labels = c("n" = "Not significant", "s" = "Significant (< 0.05)")) +
+
+    # Statistical significance threshold (p-value)
+    geom_hline(
+      yintercept = -log10(0.05),
+      linetype = 2,
+      linewidth = 0.5,
+      colour = "grey"
+    ) +
+
+    # Positive/negative effect threshold
+    geom_vline(
+      xintercept = 0,
+      linetype = 2,
+      linewidth = 0.25,
+      colour = "grey"
+    ) +
+
+    # Label axes
+    labs(x = "coefficient", y = "-log10 p-value", color = "coefficient sign",
+         shape = "q-value") +
+
+    # Label significant points
+    ggrepel::geom_text_repel(
+      data = dplyr::filter(
+        plt_df, qval < 0.05),
+      aes(label = feature),
+      size = 2.5
+    ) +
+
+    # Set theme
+    theme_minimal()
+}
