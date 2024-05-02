@@ -33,9 +33,12 @@ Imports:
     cli,
     data.table,
     dplyr,
+    ggplot2,
+    ggrepel,
     Maaslin2,
     magrittr,
     purrr,
+    stats,
     stringr,
     SummarizedExperiment,
     tibble
