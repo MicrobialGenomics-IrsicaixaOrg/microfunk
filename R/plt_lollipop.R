@@ -24,6 +24,29 @@
 #'   features.
 #' @export
 #' @autoglobal
+#' @tests
+#' # Def data paths
+#' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+#' file_path <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+#'
+#' # Read HUMAnN3 & MaAsLin2 Analysis
+#' da_result <-
+#'   read_humann(file_path, metadata) %>%
+#'   run_maaslin2(fixed_effects =  "ARM")
+#'
+#' # Lollipop Plot
+#' plt <- plt_lollipop(da_result)
+#'
+#' # Check ggplot object
+#' testthat::expect_true("ggplot" %in% class(plt))
+#'
+#' # Check number of layers
+#' testthat::expect_equal(length(plt$layers), 2)
+#'
+#' # Check labels
+#' labels <- c("coefficient", "feature", "-log10(pval)", "-log10(pval)", "xend",
+#'             "feature")
+#' testthat::expect_equal(labels, unname(unlist(plt$labels)))
 #'
 #' @examples
 #' # Def data paths
@@ -41,7 +64,6 @@ plt_lollipop <- function(da_result){
 
   plt_df <- da_result$results %>% tibble::as_tibble()
 
-  # Calculate limits for color gradient according to p-value
   lim <- plt_df %>%
     dplyr::filter(qval < 0.05) %>%
     dplyr::pull(pval) %>%
@@ -50,24 +72,18 @@ plt_lollipop <- function(da_result){
     max() %>%
     c(-.,.)
 
-
-  # Lollipop plot
   plt_df %>%
 
-    # Include only significant results
     dplyr::filter(qval < 0.05) %>%
     ggplot2::ggplot(mapping = ggplot2::aes(x = coef, y = stats::reorder(feature, coef),
                                            fill = -log10(pval),
                                            color = -log10(pval))) +
 
-    # Segment connecting origin to corresponding feature
     ggplot2::geom_segment(ggplot2::aes(xend = 0, yend = feature),
                           linewidth = 0.5) +
 
-    # Points at the end of each segment (color = significance)
     ggplot2::geom_point(shape = 21, size = 3) +
 
-    # Set color gradient with calculated limits
     ggplot2::scale_color_gradientn(colors =
                                      RColorBrewer::brewer.pal(11, "Spectral"),
                                    limits = lim) +
@@ -75,10 +91,8 @@ plt_lollipop <- function(da_result){
                                     RColorBrewer::brewer.pal(11, "Spectral"),
                                   limits = lim) +
 
-    # Add labels
     ggplot2::labs(x = "coefficient", y = "feature") +
 
-    # Change y-axis feature label size
     ggplot2::theme(axis.text.y = ggplot2::element_text(size = 7.5)) +
 
     ggplot2::theme_minimal()
