@@ -2,6 +2,7 @@
 
 export("%>%")
 export(plt_lollipop)
+export(plt_volcano)
 export(read_humann)
 export(run_maaslin2)
 importFrom(magrittr,"%>%")

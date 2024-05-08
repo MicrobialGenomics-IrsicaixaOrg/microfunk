@@ -34,6 +34,7 @@ Imports:
     data.table,
     dplyr,
     ggplot2,
+    ggrepel,
     Maaslin2,
     magrittr,
     purrr,

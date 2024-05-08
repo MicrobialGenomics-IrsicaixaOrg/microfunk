@@ -4,8 +4,10 @@ utils::globalVariables(c(
   # <plt_lollipop>
   ".",
   # <plt_lollipop>
+  # <plt_volcano>
   "coef",
   # <plt_lollipop>
+  # <plt_volcano>
   "feature",
   # <run_maaslin2>
   # <read_humann>
@@ -16,8 +18,10 @@ utils::globalVariables(c(
   # <.maaslin2_quietly>
   "heatmap_firt_n",
   # <plt_lollipop>
+  # <plt_volcano>
   "pval",
   # <plt_lollipop>
+  # <plt_volcano>
   "qval",
   NULL
 ))
