@@ -87,97 +87,97 @@ obtained using HUMAnN3 (https://huttenhower.sph.harvard.edu/humann).</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>se</dt>
+    <dl><dt id="arg-se">se<a class="anchor" aria-label="anchor" href="#arg-se"></a></dt>
 <dd><p>A SummarizedExperiment object containing normalized abundance
 values as the assay and metadata as the column data.</p></dd>
 
 
-<dt>output</dt>
+<dt id="arg-output">output<a class="anchor" aria-label="anchor" href="#arg-output"></a></dt>
 <dd><p>Character string specifying the output directory path. Default
 is a tmp folder.</p></dd>
 
 
-<dt>min_abundance</dt>
+<dt id="arg-min-abundance">min_abundance<a class="anchor" aria-label="anchor" href="#arg-min-abundance"></a></dt>
 <dd><p>Minimum abundance for each feature. Default is 0.0.</p></dd>
 
 
-<dt>min_prevalence</dt>
+<dt id="arg-min-prevalence">min_prevalence<a class="anchor" aria-label="anchor" href="#arg-min-prevalence"></a></dt>
 <dd><p>Minimum percent of samples for which a feature is
 detected at minimum abundance. Default is 0.1.</p></dd>
 
 
-<dt>min_variance</dt>
+<dt id="arg-min-variance">min_variance<a class="anchor" aria-label="anchor" href="#arg-min-variance"></a></dt>
 <dd><p>Minimum variance threshold for features to be included.
 Default is 0.0.</p></dd>
 
 
-<dt>normalization</dt>
+<dt id="arg-normalization">normalization<a class="anchor" aria-label="anchor" href="#arg-normalization"></a></dt>
 <dd><p>Normalization method to apply. Default is 'NONE'.</p></dd>
 
 
-<dt>transform</dt>
+<dt id="arg-transform">transform<a class="anchor" aria-label="anchor" href="#arg-transform"></a></dt>
 <dd><p>Transformation method to be used. Default is 'NONE'.</p></dd>
 
 
-<dt>analysis_method</dt>
+<dt id="arg-analysis-method">analysis_method<a class="anchor" aria-label="anchor" href="#arg-analysis-method"></a></dt>
 <dd><p>Analysis method to apply. Default is 'LM'.</p></dd>
 
 
-<dt>max_significance</dt>
+<dt id="arg-max-significance">max_significance<a class="anchor" aria-label="anchor" href="#arg-max-significance"></a></dt>
 <dd><p>Q-value threshold for significance. Default is 0.25.</p></dd>
 
 
-<dt>random_effects</dt>
+<dt id="arg-random-effects">random_effects<a class="anchor" aria-label="anchor" href="#arg-random-effects"></a></dt>
 <dd><p>Random effects to be included in the analysis
 (comma-delimited for multiple effects). Default is NULL.</p></dd>
 
 
-<dt>fixed_effects</dt>
+<dt id="arg-fixed-effects">fixed_effects<a class="anchor" aria-label="anchor" href="#arg-fixed-effects"></a></dt>
 <dd><p>Fixed effects to be included in the analysis
 (comma-delimited for multiple effects). Default is NULL.</p></dd>
 
 
-<dt>correction</dt>
+<dt id="arg-correction">correction<a class="anchor" aria-label="anchor" href="#arg-correction"></a></dt>
 <dd><p>Correction method for computing the Q-value. Default is
 'BH'.</p></dd>
 
 
-<dt>standardize</dt>
+<dt id="arg-standardize">standardize<a class="anchor" aria-label="anchor" href="#arg-standardize"></a></dt>
 <dd><p>Apply Z-score so continuous metadata are on the same
 scale. Default is FALSE.</p></dd>
 
 
-<dt>plot_heatmap</dt>
+<dt id="arg-plot-heatmap">plot_heatmap<a class="anchor" aria-label="anchor" href="#arg-plot-heatmap"></a></dt>
 <dd><p>Generate a heatmap for significant associations. Default
 is TRUE.</p></dd>
 
 
-<dt>heatmap_first_n</dt>
+<dt id="arg-heatmap-first-n">heatmap_first_n<a class="anchor" aria-label="anchor" href="#arg-heatmap-first-n"></a></dt>
 <dd><p>In the heatmap, plot only top N features with
 significant associations. Default is 50.</p></dd>
 
 
-<dt>plot_scatter</dt>
+<dt id="arg-plot-scatter">plot_scatter<a class="anchor" aria-label="anchor" href="#arg-plot-scatter"></a></dt>
 <dd><p>Generate scatter plots for the significant associations.
 Default is TRUE.</p></dd>
 
 
-<dt>max_pngs</dt>
+<dt id="arg-max-pngs">max_pngs<a class="anchor" aria-label="anchor" href="#arg-max-pngs"></a></dt>
 <dd><p>Set the maximum number of scatter plots for significant
 associations to save as png files. Default is 10.</p></dd>
 
 
-<dt>save_scatter</dt>
+<dt id="arg-save-scatter">save_scatter<a class="anchor" aria-label="anchor" href="#arg-save-scatter"></a></dt>
 <dd><p>Save all scatter plot ggplot objects to an RData file.
 Default is FALSE.</p></dd>
 
 
-<dt>save_models</dt>
+<dt id="arg-save-models">save_models<a class="anchor" aria-label="anchor" href="#arg-save-models"></a></dt>
 <dd><p>Return the full model outputs and save to an RData file.
 Default is FALSE.</p></dd>
 
 
-<dt>reference</dt>
+<dt id="arg-reference">reference<a class="anchor" aria-label="anchor" href="#arg-reference"></a></dt>
 <dd><p>Factor to use as reference for categorical variables,
 provided as a string of 'variable,reference' (semi-colon delimited for
 multiple variables).</p></dd>
