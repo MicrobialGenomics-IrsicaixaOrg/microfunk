@@ -38,6 +38,7 @@ Imports:
     Maaslin2,
     magrittr,
     purrr,
+    RColorBrewer,
     stats,
     stringr,
     SummarizedExperiment,
