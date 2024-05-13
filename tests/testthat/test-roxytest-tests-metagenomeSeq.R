@@ -2,12 +2,18 @@
 
 # File R/metagenomeSeq.R: @tests
 
-test_that("Function run_metagenomeseq() @ L89", {
-  # Read HUMAnN3 & MetagenomeSeq Analysis (FitZig)
-  da_fitzig <- read_humann(
+test_that("Function run_metagenomeseq() @ L93", {
+  # Read HUMAnN3
+  data <- read_humann(
     file_path = system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk"),
     metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
-   ) %>% run_metagenomeseq(variable = "ARM")
+   )
+  
+  # Invalid model
+  expect_error(run_metagenomeseq(se = data, model = "fit", variable = "ARM"))
+  
+  # MetagenomeSeq Analysis (FitZig)
+  da_fitzig <- run_metagenomeseq(se = data, variable = "ARM")
   
   # Test name of features returned
   n_zig <- c("K07488", "K09805", "K00863", "K02977", "K11905", "K00263", "K00737",
@@ -22,11 +28,9 @@ test_that("Function run_metagenomeseq() @ L89", {
    round(3) %>%
   testthat::expect_equal(0.027)
   
-  # Read HUMAnN3 & MetagenomeSeq Analysis (FitFeatureModel)
-  da_fitfeature <- read_humann(
-    file_path = system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk"),
-    metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
-   ) %>% run_metagenomeseq(model = "fitFeatureModel", variable = "ARM")
+  # MetagenomeSeq Analysis (FitFeatureModel)
+  da_fitfeature <- run_metagenomeseq(se = data,
+                     model = "fitFeatureModel", variable = "ARM")
   
   # Test name of features returned
   n_feature <- c("K03300", "K16951", "K00135", "K07488", "K06015", "K06196",
