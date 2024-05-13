@@ -30,6 +30,7 @@ Config/roxyglobals/unique: TRUE
 Config/testthat/parallel: true
 RoxygenNote: 7.3.1
 Imports: 
+    Biobase,
     cli,
     data.table,
     dplyr,
@@ -37,6 +38,7 @@ Imports:
     ggrepel,
     Maaslin2,
     magrittr,
+    metagenomeSeq,
     purrr,
     RColorBrewer,
     stats,
