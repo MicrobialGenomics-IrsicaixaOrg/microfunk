@@ -23,16 +23,11 @@
 #' @param variable A character string specifying the name of the variable of
 #'   interest to include in the model, matching the desired column name of the
 #'   sample metadata.
-#' @param model A character string specifying the model to use. Options are
-#'   "fitZig" (default) or "fitFeatureModel".
-#' @param zeroMod The model to account for the change in the number of features
-#'   observed as a linear effect of the depth of coverage. Default is NULL.
-#' @param useMixedModel Estimate the correlation between duplicate features or
-#'   replicates using duplicateCorrelation.
-#' @param useCSSoffset Whether to include the default scaling parameters in the
-#'   model. Default is FALSE.
-#' @param max_significance The p-value threshold for significance. Default is
-#'   0.05.
+#' @param mod document...
+#' @param coef document...
+#' @param B document ..
+#' @param szero document
+#' @param spos document
 #'
 #' @return A data frame (tibble) containing the results of the MetagenomeSeq
 #'   analysis.
@@ -91,133 +86,36 @@
 #'
 #' da_result
 run_metagenomeseq <- function(se,
-                              variable = NULL,
-                              model = "fitZig",
-                              zeroMod = NULL,
-                              useMixedModel = FALSE,
-                              useCSSoffset = TRUE,
-                              max_significance = 0.05){
-  if(model == "fitZig"){
-    .run_fitzig(se = se,
-                variable = variable,
-                zeroMod = zeroMod,
-                useMixedModel = useMixedModel,
-                useCSSoffset = useCSSoffset,
-                max_significance = max_significance)
-  } else if(model == "fitFeatureModel"){
-    .run_fitfeaturemodel(se = se,
-                         variable = variable,
-                         max_significance = max_significance)
-  } else{cli::cli_abort(c("x" = "Invalid model requested.",
-                     "i" = "Available models are 'fitZig' and 'fitFeatureModel'."))
+                              variable,
+                              mod = NULL,
+                              coef = 2,
+                              B = 1,
+                              szero = FALSE,
+                              spos = FALSE) {
+
+  mr_exp <- .create_MRexp(se = se)
+
+  p <- 0
+  if (!.is_normalized(se)) { p <- metagenomeSeq::cumNormStatFast(mr_exp) }
+  mr_exp <- metagenomeSeq::cumNorm(mr_exp, p = p)
+
+  if (is.null(mod)) {
+    mod <-
+      stats::as.formula(glue::glue("~ 1 + { variable }")) %>%
+      stats::model.matrix(data = Biobase::pData(mr_exp))
   }
-}
 
-
-#' Run MetagenomeSeq Fit Zig Model
-#'
-#' This function fits a zero-inflated Gaussian model using MetagenomeSeq's
-#' `fitZig()` function. It takes as input a SummarizedExperiment object
-#' containing gene/pathway abundance values and associated metadata. The
-#' function performs data normalization using cumulative sum scaling (CSS) and
-#' fits a zero-inflated Gaussian model to identify features that are
-#' differentially abundant according to the specified variable of interest and a
-#' normalization factor obtained from the data.
-#'
-#' @param se A SummarizedExperiment object containing normalized gene/pathway
-#'   abundance values.
-#' @param variable A character string specifying the name of the variable of
-#'   interest to include in the model, matching the desired column name of the
-#'   sample metadata.
-#' @param zeroMod The model to account for the change in the number of features
-#'   observed as a linear effect of the depth of coverage.
-#' @param useCSSoffset Whether to include the default scaling parameters in the
-#'   model.
-#' @param max_significance The p-value threshold for significance.
-#'
-#' @return A data frame (tibble) containing the results of the feature-level
-#'   model fitting, including an extra column indicating significance.
-#' @autoglobal
-#' @keywords internal
-#' @noRd
-.run_fitzig <- function(se,
-                        variable,
-                        zeroMod,
-                        useMixedModel,
-                        useCSSoffset,
-                        max_significance){
-
-  mr_exp <- .create_MRexp(se = se)
-
-  p <- metagenomeSeq::cumNormStatFast(mr_exp)
-  mr_obj <- metagenomeSeq::cumNorm(mr_exp, p = p)
-  v <- Biobase::pData(mr_obj)[variable][[1]]
-
-  norm_factor <- metagenomeSeq::normFactors(mr_obj)
-  norm_factor <- log2(norm_factor / stats::median(norm_factor) + 1)
-
-  mod_matrix <- stats::model.matrix(~1 + v + norm_factor)
-
-  fit <- metagenomeSeq::fitZig(obj = mr_obj,
-                               mod = mod_matrix,
-                               useCSSoffset = useCSSoffset,
-                               zeroMod = zeroMod,
-                               useMixedModel = useMixedModel,
-                               control = metagenomeSeq::zigControl(
-                                 verbose = FALSE,
-                                 maxit = 100,
-                                 dfMethod = "modified"
-                               )) %>%
+  metagenomeSeq::fitFeatureModel(
+    obj = mr_exp,
+    mod = mod,
+    coef = coef,
+    B = B,
+    szero = szero,
+    spos = spos
+  ) %>%
     metagenomeSeq::MRfulltable() %>%
-    tibble::as_tibble(rownames = "function_id") %>%
-    dplyr::mutate(signif = ifelse(adjPvalues < max_significance, TRUE, FALSE))
-
+    tibble::as_tibble(rownames = "function_id")
 }
-
-
-#' Run MetagenomeSeq Fit Feature Model
-#'
-#' This function fits a feature-level model using MetagenomeSeq's
-#' `fitFeatureModel()` function. It takes as input a SummarizedExperiment object
-#' containing gene/pathway abundance values and associated metadata. The
-#' function performs data normalization using cumulative sum scaling (CSS) and
-#' fits a zero-inflated Log-Normal mixture model to identify features that are
-#' differentially abundant according to the specified variable of interest.
-#'
-#' @param se A SummarizedExperiment object containing normalized gene/pathway
-#'   abundance values.
-#' @param variable A character string specifying the name of the variable of
-#'   interest to include in the model, matching the desired column name of the
-#'   sample metadata.
-#' @param max_significance The p-value threshold for significance.
-#'
-#' @return A data frame (tibble) containing the results of the feature-level
-#'   model fitting, including an extra column indicating significance.
-#' @autoglobal
-#' @keywords internal
-#' @noRd
-.run_fitfeaturemodel <- function(se,
-                                 variable,
-                                 max_significance){
-
-  mr_exp <- .create_MRexp(se = se)
-
-  p <- metagenomeSeq::cumNormStatFast(mr_exp)
-  mr_obj <- metagenomeSeq::cumNorm(mr_exp, p = p)
-
-  v <- Biobase::pData(mr_obj)[variable][[1]]
-  pd <- Biobase::pData(mr_obj)
-
-  mod_matrix <- stats::model.matrix(~1 + v, data = pd)
-
-  fit <- metagenomeSeq::fitFeatureModel(obj = mr_obj,
-                                        mod = mod_matrix) %>%
-    metagenomeSeq::MRfulltable() %>%
-    tibble::as_tibble(rownames = "function_id") %>%
-    dplyr::mutate(signif = ifelse(adjPvalues < max_significance, TRUE, FALSE))
-
-}
-
 
 #' Create an MRexperiment Object
 #'
@@ -233,7 +131,7 @@ run_metagenomeseq <- function(se,
 #' @autoglobal
 #' @keywords internal
 #' @noRd
-.create_MRexp <- function(se){
+.create_MRexp <- function(se) {
 
   counts <-
     SummarizedExperiment::assays(se)$humann %>%
@@ -248,6 +146,13 @@ run_metagenomeseq <- function(se,
     Biobase::AnnotatedDataFrame()
 
   mr_exp <- metagenomeSeq::newMRexperiment(counts, phenoData = pheno)
-
 }
 
+.is_normalized <- function(se) {
+  method <-
+    SummarizedExperiment::assays(se)$humann %>%
+    tibble::as_tibble(rownames = "function_id") %>%
+    .extract_norm_method()
+
+  ifelse(method == "cpm", TRUE, FALSE)
+}

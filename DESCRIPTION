@@ -36,6 +36,7 @@ Imports:
     dplyr,
     ggplot2,
     ggrepel,
+    glue,
     Maaslin2,
     magrittr,
     metagenomeSeq,

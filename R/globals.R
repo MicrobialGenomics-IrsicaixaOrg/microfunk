@@ -3,9 +3,6 @@
 utils::globalVariables(c(
   # <plt_lollipop>
   ".",
-  # <.run_fitzig>
-  # <.run_fitfeaturemodel>
-  "adjPvalues",
   # <plt_lollipop>
   # <plt_volcano>
   "coef",

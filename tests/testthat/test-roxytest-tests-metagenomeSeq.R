@@ -2,7 +2,7 @@
 
 # File R/metagenomeSeq.R: @tests
 
-test_that("Function run_metagenomeseq() @ L93", {
+test_that("Function run_metagenomeseq() @ L88", {
   # Read HUMAnN3
   data <- read_humann(
     file_path = system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk"),

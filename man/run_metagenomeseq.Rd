@@ -6,12 +6,12 @@
 \usage{
 run_metagenomeseq(
   se,
-  variable = NULL,
-  model = "fitZig",
-  zeroMod = NULL,
-  useMixedModel = FALSE,
-  useCSSoffset = TRUE,
-  max_significance = 0.05
+  variable,
+  mod = NULL,
+  coef = 2,
+  B = 1,
+  szero = FALSE,
+  spos = FALSE
 )
 }
 \arguments{
@@ -22,20 +22,15 @@ abundance values.}
 interest to include in the model, matching the desired column name of the
 sample metadata.}
 
-\item{model}{A character string specifying the model to use. Options are
-"fitZig" (default) or "fitFeatureModel".}
+\item{mod}{document...}
 
-\item{zeroMod}{The model to account for the change in the number of features
-observed as a linear effect of the depth of coverage. Default is NULL.}
+\item{coef}{document...}
 
-\item{useMixedModel}{Estimate the correlation between duplicate features or
-replicates using duplicateCorrelation.}
+\item{B}{document ..}
 
-\item{useCSSoffset}{Whether to include the default scaling parameters in the
-model. Default is FALSE.}
+\item{szero}{document}
 
-\item{max_significance}{The p-value threshold for significance. Default is
-0.05.}
+\item{spos}{document}
 }
 \value{
 A data frame (tibble) containing the results of the MetagenomeSeq
