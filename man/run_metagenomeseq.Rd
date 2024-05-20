@@ -22,15 +22,20 @@ abundance values.}
 interest to include in the model, matching the desired column name of the
 sample metadata.}
 
-\item{mod}{document...}
+\item{mod}{An optional model matrix for the count distribution. If NULL,
+model matrix will be created using the provided variable.}
 
-\item{coef}{document...}
+\item{coef}{An integer specifying the coefficient of interest to grab log
+fold-changes. Default is 2.}
 
-\item{B}{document ..}
+\item{B}{An integer specifying the number of bootstraps to perform for the
+fit. Default is 1.}
 
-\item{szero}{document}
+\item{szero}{A logical value indicating whether to shrink zero component
+parameters. Default is FALSE.}
 
-\item{spos}{document}
+\item{spos}{A logical value indicating whether to shrink positive component
+parameters. Default is FALSE.}
 }
 \value{
 A data frame (tibble) containing the results of the MetagenomeSeq
@@ -48,13 +53,15 @@ pathways of multiple samples, obtained using HUMAnN3
 (https://huttenhower.sph.harvard.edu/humann).
 }
 \details{
-The function takes a SummarizedExperiment object containing normalized gene/
-pathway abundance values as the assay and metadata as the column data, as
-well as several parameter options to run the analysis, using a zero-inflated
-Gaussian mixture model as default (\code{fitZig()}). To use a zero-inflated
-Log-Normal mixture model for each feature (\code{fitFeatureModel()}), the argument
-\code{model}should be modified (\code{model = "fitFeatureModel"}).It returns the
-results of the analysis as a data frame (tibble).
+The function takes a SummarizedExperiment object containing gene/ pathway
+abundance values as the assay and metadata as the column data, as well as
+several parameter options to run the analysis, using a zero-inflated
+Log-Normal mixture model for each feature (\code{fitFeatureModel()}).It converts
+the SummarizedExperiment object to a metagenomeSeq object, checks if the
+count data is normalized, and if not, calculates the normalization statistics
+to apply cumulative sum scaling normalization. It constructs a model matrix,
+fits the model to the data and returns the results of the analysis as a data
+frame (tibble).
 }
 \examples{
 # Read HUMAnN3 & MetagenomeSeq Analysis

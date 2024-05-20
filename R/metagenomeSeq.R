@@ -10,72 +10,55 @@
 #' pathways of multiple samples, obtained using HUMAnN3
 #' (https://huttenhower.sph.harvard.edu/humann).
 #'
-#' The function takes a SummarizedExperiment object containing normalized gene/
-#' pathway abundance values as the assay and metadata as the column data, as
-#' well as several parameter options to run the analysis, using a zero-inflated
-#' Gaussian mixture model as default (`fitZig()`). To use a zero-inflated
-#' Log-Normal mixture model for each feature (`fitFeatureModel()`), the argument
-#' `model`should be modified (`model = "fitFeatureModel"`).It returns the
-#' results of the analysis as a data frame (tibble).
+#' The function takes a SummarizedExperiment object containing gene/ pathway
+#' abundance values as the assay and metadata as the column data, as well as
+#' several parameter options to run the analysis, using a zero-inflated
+#' Log-Normal mixture model for each feature (`fitFeatureModel()`).It converts
+#' the SummarizedExperiment object to a metagenomeSeq object, checks if the
+#' count data is normalized, and if not, calculates the normalization statistics
+#' to apply cumulative sum scaling normalization. It constructs a model matrix,
+#' fits the model to the data and returns the results of the analysis as a data
+#' frame (tibble).
 #'
 #' @param se A SummarizedExperiment object containing normalized gene/pathway
 #'   abundance values.
 #' @param variable A character string specifying the name of the variable of
 #'   interest to include in the model, matching the desired column name of the
 #'   sample metadata.
-#' @param mod document...
-#' @param coef document...
-#' @param B document ..
-#' @param szero document
-#' @param spos document
+#' @param mod An optional model matrix for the count distribution. If NULL,
+#'   model matrix will be created using the provided variable.
+#' @param coef An integer specifying the coefficient of interest to grab log
+#'   fold-changes. Default is 2.
+#' @param B An integer specifying the number of bootstraps to perform for the
+#'   fit. Default is 1.
+#' @param szero A logical value indicating whether to shrink zero component
+#'   parameters. Default is FALSE.
+#' @param spos A logical value indicating whether to shrink positive component
+#'   parameters. Default is FALSE.
 #'
 #' @return A data frame (tibble) containing the results of the MetagenomeSeq
 #'   analysis.
 #' @export
 #' @autoglobal
 #' @tests
-#' # Read HUMAnN3
-#' data <- read_humann(
-#'   file_path = system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk"),
-#'   metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
-#'  )
+#' # Read HUMAnN3 & MetagenomeSeq Analysis
+#' da_result <- read_humann(
+#'  file_path = system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk"),
+#'  metadata = system.file("extdata", "ex_meta.csv", package = "microfunk") ) %>%
+#'  run_metagenomeseq(variable = "ARM")
 #'
-#' # Invalid model
-#' expect_error(run_metagenomeseq(se = data, model = "fit", variable = "ARM"))
+#'  # Test name of features returned
+#'  f <- c("K03300", "K00863", "K19130", "K16951", "K07488", "K00135", "K05522",
+#'       "K06015", "K07776", "K06196")
+#'  res <- as.vector(da_result$function_id)
+#'  testthat::expect_equal(f, res)
 #'
-#' # MetagenomeSeq Analysis (FitZig)
-#' da_fitzig <- run_metagenomeseq(se = data, variable = "ARM")
-#'
-#' # Test name of features returned
-#' n_zig <- c("K07488", "K09805", "K00863", "K02977", "K11905", "K00263", "K00737",
-#'            "K11904", "K09961", "K22902")
-#' f_zig <- as.vector(da_fitzig$function_id)
-#' testthat::expect_equal(n_zig, f_zig)
-#'
-#' # Test p-values
-#' da_fitzig %>%
-#'  dplyr::pull(adjPvalues) %>%
-#'  mean() %>%
-#'  round(3) %>%
-#' testthat::expect_equal(0.027)
-#'
-#' # MetagenomeSeq Analysis (FitFeatureModel)
-#' da_fitfeature <- run_metagenomeseq(se = data,
-#'                    model = "fitFeatureModel", variable = "ARM")
-#'
-#' # Test name of features returned
-#' n_feature <- c("K03300", "K16951", "K00135", "K07488", "K06015", "K06196",
-#'                "K01908", "K19130", "K01060", "K09858")
-#' f_feature <- as.vector(da_fitfeature$function_id)
-#' testthat::expect_equal(n_feature, f_feature)
-#'
-#' # Test p-values
-#' da_fitfeature %>%
-#'  dplyr::pull(adjPvalues) %>%
-#'  mean() %>%
-#'  round(3) %>%
-#' testthat::expect_equal(0.258)
-#'
+#'  # Test p-values
+#'  da_result %>%
+#'    dplyr::pull(adjPvalues) %>%
+#'    mean() %>%
+#'    round(3) %>%
+#'    testthat::expect_equal(0.147)
 #'
 #' @examples
 #' # Read HUMAnN3 & MetagenomeSeq Analysis
@@ -148,6 +131,19 @@ run_metagenomeseq <- function(se,
   mr_exp <- metagenomeSeq::newMRexperiment(counts, phenoData = pheno)
 }
 
+#' Check if SummarizedExperiment object is normalized
+#'
+#' This function checks whether the assay contained in a SummarizedExperiment
+#' object is normalized to CPM (counts per million)
+#'
+#' @param se A SummarizedExperiment object containing the assay data to be
+#'   checked for normalization.
+#'
+#' @return A logical value (TRUE/FALSE) indicating whether the assay is
+#'   normalized using the CPM method.
+#' @autoglobal
+#' @keywords internal
+#' @noRd
 .is_normalized <- function(se) {
   method <-
     SummarizedExperiment::assays(se)$humann %>%

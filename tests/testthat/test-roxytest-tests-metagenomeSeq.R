@@ -2,47 +2,24 @@
 
 # File R/metagenomeSeq.R: @tests
 
-test_that("Function run_metagenomeseq() @ L88", {
-  # Read HUMAnN3
-  data <- read_humann(
-    file_path = system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk"),
-    metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
-   )
+test_that("Function run_metagenomeseq() @ L71", {
+  # Read HUMAnN3 & MetagenomeSeq Analysis
+  da_result <- read_humann(
+   file_path = system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk"),
+   metadata = system.file("extdata", "ex_meta.csv", package = "microfunk") ) %>%
+   run_metagenomeseq(variable = "ARM")
   
-  # Invalid model
-  expect_error(run_metagenomeseq(se = data, model = "fit", variable = "ARM"))
+   # Test name of features returned
+   f <- c("K03300", "K00863", "K19130", "K16951", "K07488", "K00135", "K05522",
+        "K06015", "K07776", "K06196")
+   res <- as.vector(da_result$function_id)
+   testthat::expect_equal(f, res)
   
-  # MetagenomeSeq Analysis (FitZig)
-  da_fitzig <- run_metagenomeseq(se = data, variable = "ARM")
-  
-  # Test name of features returned
-  n_zig <- c("K07488", "K09805", "K00863", "K02977", "K11905", "K00263", "K00737",
-             "K11904", "K09961", "K22902")
-  f_zig <- as.vector(da_fitzig$function_id)
-  testthat::expect_equal(n_zig, f_zig)
-  
-  # Test p-values
-  da_fitzig %>%
-   dplyr::pull(adjPvalues) %>%
-   mean() %>%
-   round(3) %>%
-  testthat::expect_equal(0.027)
-  
-  # MetagenomeSeq Analysis (FitFeatureModel)
-  da_fitfeature <- run_metagenomeseq(se = data,
-                     model = "fitFeatureModel", variable = "ARM")
-  
-  # Test name of features returned
-  n_feature <- c("K03300", "K16951", "K00135", "K07488", "K06015", "K06196",
-                 "K01908", "K19130", "K01060", "K09858")
-  f_feature <- as.vector(da_fitfeature$function_id)
-  testthat::expect_equal(n_feature, f_feature)
-  
-  # Test p-values
-  da_fitfeature %>%
-   dplyr::pull(adjPvalues) %>%
-   mean() %>%
-   round(3) %>%
-  testthat::expect_equal(0.258)
+   # Test p-values
+   da_result %>%
+     dplyr::pull(adjPvalues) %>%
+     mean() %>%
+     round(3) %>%
+     testthat::expect_equal(0.147)
 })
 
