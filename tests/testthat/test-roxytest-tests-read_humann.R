@@ -2,7 +2,7 @@
 
 # File R/read_humann.R: @tests
 
-test_that("Function read_humann() @ L62", {
+test_that("Function read_humann() @ L60", {
   file_c <-
     system.file("extdata", "All_genefam_cpm_kegg.tsv", package =
     "microfunk")
@@ -29,7 +29,7 @@ test_that("Function read_humann() @ L62", {
 })
 
 
-test_that("Function .humann_path_checks() @ L130", {
+test_that("Function .humann_path_checks() @ L122", {
   nfile <-
     system.file("extdata", "nfile", package = "microfunk")
   meta <-
@@ -40,26 +40,5 @@ test_that("Function .humann_path_checks() @ L130", {
   testthat::expect_error(.humann_path_checks(metadata = meta))
   testthat::expect_error(.humann_path_checks(file))
   testthat::expect_error(.humann_path_checks(nfile, meta))
-})
-
-
-test_that("Function .rpk2cpm() @ L262", {
-  # Input tibble
-  column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
-  column2 <- c(20, 100, 90, 10, 5, 5)
-  input_tbl <- tibble::tibble(
-    function_id = column1,
-    sample1 = column2,
-    sample2 = column2 )
-  
-  # Expected output tibble
-  column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
-  column2 <- c(40, 40, 800, 720, 80, 160)
-  output_tbl <- tibble::tibble(
-    function_id = column1,
-    sample1 = column2,
-    sample2 = column2 )
-  
-  testthat::expect_equal(.rpk2cpm(input_tbl), output_tbl)
 })
 

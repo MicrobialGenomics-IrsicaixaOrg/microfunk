@@ -4,14 +4,12 @@
 #' (https://huttenhower.sph.harvard.edu/humann), which contains information
 #' about the abundance of gene families or metabolic pathways of a given sample
 #' in a TSV format. The function performs several checks on the structure and
-#' content of the file and normalizes the data from RPK units (reads per
-#' kilobase) to CPM units (copies per million) if needed. It also reads and
-#' validates the metadata CSV file, ensuring it contains the required
-#' information and matching sample IDs to the provided TSV data file. Finally,
-#' it creates a SummarizedExperiment object
+#' content of the file, as well as reading and validating the metadata CSV file,
+#' ensuring it contains the required information and matching sample IDs to the
+#' provided TSV data file. Finally, it creates a SummarizedExperiment object
 #' (https://bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-#' containing normalized gene/ pathway abundance values as the assay and
-#' metadata as the column data.
+#' containing gene/pathway abundance values as the assay and metadata as the
+#' column data.
 #'
 #' @param file_path Path to the HUMAnN3 output (gene families or pathway)
 #'   collapsed TSV file. The file should contain aggregated abundance data
@@ -21,8 +19,8 @@
 #'   information, where each row corresponds to a sample and each column
 #'   represents a specific annotation associated with that sample.
 #'
-#' @return A SummarizedExperiment object containing normalized abundance values
-#'   as the assay and metadata as the column data.
+#' @return A SummarizedExperiment object containing gene/pathway abundance
+#'   values as the assay and metadata as the column data.
 #' @export
 #' @autoglobal
 #' @tests
@@ -77,13 +75,6 @@ read_humann <- function(file_path, metadata){
     dplyr::rename_with(tbl, ~ stringr::str_remove(., "_Abundance.*$")) %>%
     dplyr::rename("function_id" = 1)
 
-  # check data normalization
-  norm_method <- .extract_norm_method(tbl)
-
-  if (norm_method == "rpk") {
-    tbl <- .rpk2cpm(tbl)
-  }
-
   # read and check metadata
   m_data <-
     data.table::fread(metadata) %>%
@@ -93,6 +84,7 @@ read_humann <- function(file_path, metadata){
 
   # reorder by id
   tbl <- tbl %>%
+    dplyr::arrange(function_id) %>%
     dplyr::select(function_id, rownames(m_data)) %>%
     data.frame(row.names = 1)
 
@@ -192,87 +184,6 @@ read_humann <- function(file_path, metadata){
       "i" = "First column should be 'character' and the rest should be 'numeric'."
     ))
   }
-}
-
-#' Extract HUMAnN3 output data normalization method
-#'
-#' This function determines if abundance data for each sample is in RPK units
-#' (reads per kilobase) or is normalized to CPM units (copies per million). It
-#' also ensures consistency of units across all samples (columns).
-#'
-#' @param tbl A tibble containing the data from the HUMAnN3 output file.
-#'
-#' @return A character string indicating the normalization method ('cpm' or
-#'   'rpk').
-#' @keywords internal
-#' @autoglobal
-.extract_norm_method <- function(tbl) {
-  # check data normalization
-  sum_counts <-
-    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
-    dplyr::select(-1) %>%
-    colSums()
-
-  classification <-
-    ifelse(dplyr::between(sum_counts, 99900, 1001000), "cpm", "rpk") %>%
-    unique()
-
-  # Check if all are same normalization
-  if (length(classification) != 1) {
-    cli::cli_abort(c(
-      "x" = "Columns have mixed units.",
-      "i" = "Please ensure all samples have either 'rpk' or 'cpm' units."
-    ))
-  }
-
-  classification
-}
-
-#' Convert RPK units to CPM
-#'
-#' This function divides the data into two separate tibbles: one containing main
-#' categories (gene families or pathways) and another containing the stratified
-#' abundance values by species. After separating the data, it scales the values
-#' within each tibble from RPK to CPM and merges normalized data into a single
-#' tibble.
-#'
-#' @param tbl A tibble containing the data from the HUMAnN3 output file.
-#'
-#' @return A tibble with the abundance data converted from RPK to CPM.
-#' @keywords internal
-#' @autoglobal
-#' @tests
-#' # Input tibble
-#' column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
-#' column2 <- c(20, 100, 90, 10, 5, 5)
-#' input_tbl <- tibble::tibble(
-#'   function_id = column1,
-#'   sample1 = column2,
-#'   sample2 = column2 )
-#'
-#' # Expected output tibble
-#' column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
-#' column2 <- c(40, 40, 800, 720, 80, 160)
-#' output_tbl <- tibble::tibble(
-#'   function_id = column1,
-#'   sample1 = column2,
-#'   sample2 = column2 )
-#'
-#' testthat::expect_equal(.rpk2cpm(input_tbl), output_tbl)
-.rpk2cpm <- function(tbl) {
-  # scale by cat
-  tbl_group <-
-    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x) * 1e3))
-
-  # scale by strat
-  tbl_strat <-
-    dplyr::filter(tbl, stringr::str_detect(function_id, "[|]|UNMAPPED")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x) * 1e3))
-
-  dplyr::bind_rows(tbl_group, tbl_strat) %>%
-    dplyr::arrange(function_id) %>%
-    dplyr::distinct(function_id, .keep_all = TRUE)
 }
 
 #' Check metadata consistency with HUMAnN3 output file
