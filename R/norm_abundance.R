@@ -76,20 +76,22 @@
 #' })
 #'
 #' @examples
-#' #' # Def data paths
-#' metadata <-
-#'   system.file("extdata", "ex_meta.csv", package = "microfunk")
+#' # Def data paths
+#' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
 #' file_path <-
 #'   system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
 #'
 #' # Read HUMAnN3 & Normalize to Relative Abundance
-#' transformed_data <- read_humann(file_path, metadata) %>%
+#' transformed_data <-
+#'   read_humann(file_path, metadata) %>%
 #'   norm_abundance(norm = "relab")
 norm_abundance <- function(se, norm){
 
   if (norm != "cpm" && norm != "relab"){
-    cli::cli_abort(c("x" = "The requested normalization method is not supported.",
-      "i" = "Supported methods are copies per million ('cpm') and relative abundance ('relab')."))
+    cli::cli_abort(c(
+      "x" = "The requested normalization method is not supported.",
+      "i" = "Supported methods are copies per million ('cpm') and relative abundance ('relab')."
+    ))
   }
 
   # get abundance data
@@ -98,40 +100,26 @@ norm_abundance <- function(se, norm){
     tibble::as_tibble(rownames = "function_id")
 
   # check normalization method
-  classification <-  .extract_norm_method(data)
+  classification <- .extract_norm_method(data)
 
-  if (norm == "cpm"){
-    if (classification == "cpm"){
-      cli::cli_abort(c("x" = "The requested normalization method
-                       is already applied to the data."))
-    }
-    if (classification == "rpk"){
-      norm_tbl <- .rpk2cpm(data)
-    }
-    else{
-      norm_tbl <- .relab2cpm(data)
-    }
+  if (norm == classification) {
+    cli::cli_abort(c(
+      "x" = "The requested normalization method is already applied to the data."
+    ))
   }
 
-  if (norm == "relab"){
-    if (classification == "relab"){
-      cli::cli_abort(c("x" = "The requested normalization method
-                       is already applied to the data."))
-    }
-    if (classification == "cpm"){
-      norm_tbl <- .cpm2relab(data)
-    }
-    else{
-      norm_tbl <- .rpk2relab(data)
-    }
-  }
+  norm_tbl <- dplyr::case_when(
+    norm == "cpm" & classification == "rpk" ~ .rpk2cpm(data),
+    norm == "cpm" & classification == "relab" ~ .relab2cpm(data),
+    norm == "relab" & classification == "rpk" ~ .rpk2relab(data),
+    norm == "relab" & classification == "cpm" ~ .cpm2relab(data)
+  )
 
   # update SE object
   SummarizedExperiment::assays(se) <- list(humann = norm_tbl)
   se
 
 }
-
 
 #' Extract abundance data normalization method
 #'
@@ -156,6 +144,7 @@ norm_abundance <- function(se, norm){
 #'    tibble::as_tibble(rownames = "function_id")
 #'  testthat::expect_error(.extract_norm_method(data))
 .extract_norm_method <- function(tbl) {
+
   # check data normalization
   sum_counts <-
     dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
@@ -163,9 +152,11 @@ norm_abundance <- function(se, norm){
     colSums()
 
   classification <-
-    ifelse(dplyr::between(sum_counts, 99900, 1001000), "cpm",
-           ifelse(dplyr::between(sum_counts, 0.9, 1.1), "relab", "rpk")) %>%
-    unique()
+    dplyr::case_when(
+      dplyr::between(sum_counts, 99900, 1001000) ~ "cpm",
+      dplyr::between(sum_counts, 0.9, 1.1) ~ "relab",
+      TRUE ~ "rpk"
+    ) %>% unique()
 
   # Check if all are same normalization
   if (length(classification) != 1) {
@@ -178,7 +169,6 @@ norm_abundance <- function(se, norm){
 
   classification
 }
-
 
 #' Convert RPK units to CPM
 #'
@@ -232,7 +222,6 @@ norm_abundance <- function(se, norm){
     data.frame(row.names = 1)
 
   norm_tbl
-
 }
 
 #' Convert relative abundance units to CPM
@@ -288,7 +277,6 @@ norm_abundance <- function(se, norm){
     data.frame(row.names = 1)
 
   norm_tbl
-
 }
 
 
@@ -345,8 +333,6 @@ norm_abundance <- function(se, norm){
     data.frame(row.names = 1)
 
   norm_tbl
-
-
 }
 
 #' Convert CPM units to relative abundance
@@ -402,14 +388,4 @@ norm_abundance <- function(se, norm){
     data.frame(row.names = 1)
 
   norm_tbl
-
 }
-
-
-
-
-
-
-
-
-

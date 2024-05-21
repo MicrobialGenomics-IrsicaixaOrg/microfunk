@@ -33,13 +33,13 @@ determines the current normalization method applied to the data (RPK, CPM or
 relative abundance) and applies the requested normalization if needed.
 }
 \examples{
-#' # Def data paths
-metadata <-
-  system.file("extdata", "ex_meta.csv", package = "microfunk")
+# Def data paths
+metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
 file_path <-
   system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
 
 # Read HUMAnN3 & Normalize to Relative Abundance
-transformed_data <- read_humann(file_path, metadata) \%>\%
+transformed_data <-
+  read_humann(file_path, metadata) \%>\%
   norm_abundance(norm = "relab")
 }
