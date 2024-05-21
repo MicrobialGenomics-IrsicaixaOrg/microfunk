@@ -10,9 +10,12 @@ utils::globalVariables(c(
   # <plt_volcano>
   "feature",
   # <run_maaslin2>
-  # <read_humann>
   # <.extract_norm_method>
   # <.rpk2cpm>
+  # <.relab2cpm>
+  # <.rpk2relab>
+  # <.cpm2relab>
+  # <read_humann>
   "function_id",
   # <run_maaslin2>
   # <.maaslin2_quietly>

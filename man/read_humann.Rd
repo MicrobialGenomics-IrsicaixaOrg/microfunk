@@ -17,22 +17,20 @@ information, where each row corresponds to a sample and each column
 represents a specific annotation associated with that sample.}
 }
 \value{
-A SummarizedExperiment object containing normalized abundance values
-as the assay and metadata as the column data.
+A SummarizedExperiment object containing gene/pathway abundance
+values as the assay and metadata as the column data.
 }
 \description{
 This function reads a HUMAnN3 output file
 (https://huttenhower.sph.harvard.edu/humann), which contains information
 about the abundance of gene families or metabolic pathways of a given sample
 in a TSV format. The function performs several checks on the structure and
-content of the file and normalizes the data from RPK units (reads per
-kilobase) to CPM units (copies per million) if needed. It also reads and
-validates the metadata CSV file, ensuring it contains the required
-information and matching sample IDs to the provided TSV data file. Finally,
-it creates a SummarizedExperiment object
+content of the file, as well as reading and validating the metadata CSV file,
+ensuring it contains the required information and matching sample IDs to the
+provided TSV data file. Finally, it creates a SummarizedExperiment object
 (https://bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-containing normalized gene/ pathway abundance values as the assay and
-metadata as the column data.
+containing gene/pathway abundance values as the assay and metadata as the
+column data.
 }
 \examples{
 # Def data paths
