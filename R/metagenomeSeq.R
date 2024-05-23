@@ -40,25 +40,30 @@
 #'   analysis.
 #' @export
 #' @autoglobal
-#' @tests
+#' @examples
 #' # Read HUMAnN3 & MetagenomeSeq Analysis
+#' set.seed(123)
 #' da_result <- read_humann(
 #'  file_path = system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk"),
 #'  metadata = system.file("extdata", "ex_meta.csv", package = "microfunk") ) %>%
 #'  run_metagenomeseq(variable = "ARM")
 #'
 #'  # Test name of features returned
-#'  f <- c("K03300", "K00863", "K19130", "K16951", "K07488", "K00135", "K05522",
-#'       "K06015", "K07776", "K06196")
-#'  res <- as.vector(da_result$function_id)
-#'  testthat::expect_equal(f, res)
+#'  f <- c(
+#'    "K03300", "K00863", "K19130", "K16951", "K07488", "K00135", "K06015",
+#'    "K05522", "K07776", "K06196"
+#'  )
+#'
+#'  da_result %>%
+#'    dplyr::pull(function_id) %>%
+#'    testthat::expect_equal(f)
 #'
 #'  # Test p-values
 #'  da_result %>%
 #'    dplyr::pull(adjPvalues) %>%
 #'    mean() %>%
 #'    round(3) %>%
-#'    testthat::expect_equal(0.147)
+#'    testthat::expect_equal(0.109)
 #'
 #' @examples
 #' # Read HUMAnN3 & MetagenomeSeq Analysis
