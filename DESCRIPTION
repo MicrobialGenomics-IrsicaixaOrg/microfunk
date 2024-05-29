@@ -17,18 +17,6 @@ URL: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk,
     https://microbialgenomics-irsicaixaorg.github.io/microfunk/
 BugReports: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/issues
 biocViews: Software, Sequencing, Microbiome, Metagenomics
-Suggests:
-    testthat (>= 3.0.0),
-    knitr
-Config/testthat/edition: 3
-Depends: 
-    R (>= 4.3.0)
-LazyData: false
-VignetteBuilder: knitr
-Config/roxyglobals/filename: globals.R
-Config/roxyglobals/unique: TRUE
-Config/testthat/parallel: true
-RoxygenNote: 7.3.1
 Imports: 
     Biobase,
     cli,
@@ -39,10 +27,23 @@ Imports:
     glue,
     Maaslin2,
     magrittr,
-    metagenomeSeq,
     purrr,
     RColorBrewer,
     stats,
     stringr,
     SummarizedExperiment,
     tibble
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    metagenomeSeq
+Config/testthat/edition: 3
+Depends: 
+    R (>= 4.3.0)
+LazyData: false
+VignetteBuilder: knitr
+Config/roxyglobals/filename: globals.R
+Config/roxyglobals/unique: TRUE
+Config/testthat/parallel: true
+RoxygenNote: 7.3.1
+
