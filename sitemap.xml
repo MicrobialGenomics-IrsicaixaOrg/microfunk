@@ -16,9 +16,6 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/dot-extract_norm_method.html</loc>
-  </url>
-  <url>
     <loc>/reference/dot-humann_metadata_check.html</loc>
   </url>
   <url>
@@ -28,10 +25,10 @@
     <loc>/reference/dot-humann_tbl_checks.html</loc>
   </url>
   <url>
-    <loc>/reference/dot-rpk2cpm.html</loc>
+    <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>/reference/norm_abundance.html</loc>
   </url>
   <url>
     <loc>/reference/pipe.html</loc>
@@ -47,8 +44,5 @@
   </url>
   <url>
     <loc>/reference/run_maaslin2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_metagenomeseq.html</loc>
   </url>
 </urlset>

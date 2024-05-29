@@ -3,14 +3,12 @@
 (https://huttenhower.sph.harvard.edu/humann), which contains information
 about the abundance of gene families or metabolic pathways of a given sample
 in a TSV format. The function performs several checks on the structure and
-content of the file and normalizes the data from RPK units (reads per
-kilobase) to CPM units (copies per million) if needed. It also reads and
-validates the metadata CSV file, ensuring it contains the required
-information and matching sample IDs to the provided TSV data file. Finally,
-it creates a SummarizedExperiment object
+content of the file, as well as reading and validating the metadata CSV file,
+ensuring it contains the required information and matching sample IDs to the
+provided TSV data file. Finally, it creates a SummarizedExperiment object
 (https://bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-containing normalized gene/ pathway abundance values as the assay and
-metadata as the column data."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+containing gene/pathway abundance values as the assay and metadata as the
+column data."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -56,14 +54,12 @@ metadata as the column data."><!-- mathjax --><script src="https://cdnjs.cloudfl
 (https://huttenhower.sph.harvard.edu/humann), which contains information
 about the abundance of gene families or metabolic pathways of a given sample
 in a TSV format. The function performs several checks on the structure and
-content of the file and normalizes the data from RPK units (reads per
-kilobase) to CPM units (copies per million) if needed. It also reads and
-validates the metadata CSV file, ensuring it contains the required
-information and matching sample IDs to the provided TSV data file. Finally,
-it creates a SummarizedExperiment object
+content of the file, as well as reading and validating the metadata CSV file,
+ensuring it contains the required information and matching sample IDs to the
+provided TSV data file. Finally, it creates a SummarizedExperiment object
 (https://bioconductor.org/packages/devel/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-containing normalized gene/ pathway abundance values as the assay and
-metadata as the column data.</p>
+containing gene/pathway abundance values as the assay and metadata as the
+column data.</p>
     </div>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_humann</span><span class="op">(</span><span class="va">file_path</span>, <span class="va">metadata</span><span class="op">)</span></span></code></pre></div>
@@ -82,8 +78,8 @@ represents a specific annotation associated with that sample.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>A SummarizedExperiment object containing normalized abundance values
-as the assay and metadata as the column data.</p>
+<p>A SummarizedExperiment object containing gene/pathway abundance
+values as the assay and metadata as the column data.</p>
     </div>
     <div id="ref-examples">
     <h2>Examples</h2>
@@ -99,9 +95,9 @@ as the assay and metadata as the column data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dim: 81633 214 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): humann</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(81633): UNMAPPED UNGROUPED ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   K23016|g__Escherichia.s__Escherichia_coli</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   K23016|g__Klebsiella.s__Klebsiella_pneumoniae</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rownames(81633): K00001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   K00001|g__Acidaminococcus.s__Acidaminococcus_fermentans ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   UNGROUPED|unclassified UNMAPPED</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colnames(214): RAG_1 RAG_4 ... RAG_48 RAG_20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(1): ARM</span>
