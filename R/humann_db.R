@@ -7,7 +7,7 @@
 #' @keywords internal
 #' @noRd
 .cache_path <- function() {
-  file.path("~", ".microfunk")
+  file.path("~", ".microfunk", "humann_db")
 }
 
 #' Create a human-readable name for a database file
@@ -57,7 +57,7 @@
     return(invisible(TRUE))
   }
 
-  dir.create(.cache_path())
+  dir.create(.cache_path(), recursive = TRUE)
   cli::cli_alert_success("Created {cli::col_blue('.microfunk')} directory")
 }
 
@@ -73,7 +73,7 @@
 #' @keywords internal
 #' @noRd
 .file_db_exists <- function(file_name) {
-  exists <- file.exists(file.path(.cache_path(), "humann_db", file_name))
+  exists <- file.exists(file.path(.cache_path(), file_name))
   if (exists) {
     cli::cli_alert_success("File {cli::col_blue(file_name)} cached")
   } else {
@@ -88,23 +88,29 @@
 #'
 #' @param file_name A character string representing the name of the file to be
 #'   downloaded.
-#' @param overwrite A logical indicating whether to overwrite existing files.
 #'
 #' @keywords internal
 #' @noRd
-.get_from_aws <- function(file_name, overwrite = FALSE) {
-  cli::cli_alert_info("Fetching {cli::col_blue(file_name)} from AWS")
-  tryCatch({
-    aws.s3::save_object(
-      bucket = "bioconductor-packages",
-      object = paste0("microfunk/humann_db/", file_name),
-      file = file.path("~/.microfunk/humann_db", file_name),
-      overwrite = overwrite
-    )
-  }, error = function(e) {
-    cli::cli_abort(c("x" = "Error downloading {cli::col_blue(file_name)}", "!" = e$message))
-  })
+.get_from_aws <- function(file_name, mode = "wb", quiet = TRUE) {
+  dest_file <- file.path(.cache_path(), file_name)
+  b_url <- "https://bioconductor-packages.s3.amazonaws.com/microfunk/humann_db/"
+  url <- paste0(b_url, file_name)
 
+  cli::cli_alert_info("Fetching {cli::col_blue(file_name)} from AWS")
+  h <- curl::new_handle()
+  curl::handle_setheaders(h, `accept-encoding` = "gz")
+  timeout_seconds = 1800
+  curl::handle_setopt(h, timeout_ms = timeout_seconds * 1000)
+  result = tryCatch({
+    curl::curl_download(url, dest_file, mode = mode, quiet = quiet, handle = h)
+    return(TRUE)
+  }, error = function(e) {
+    cli::cli_abort(c(
+      "x" = "Error downloading {cli::col_blue(file_name)}", "!" = e$message
+    ))
+    if (file.exists(dest_file)) { file.remove(dest_file) }
+    return(FALSE)
+  })
   cli::cli_alert_success(
     "File {cli::col_blue(file_name)} downloaded to {cli::col_blue(.cache_path())}"
   )
@@ -145,6 +151,7 @@
 #' testthat::expect_invisible(fetch_humann_db("test", overwrite = TRUE))
 #'
 #' # Snapshot tests
+#' file.remove(file.path("~/.microfunk/humann_db", "test_v201901b.tsv.gz"))
 #' testthat::expect_snapshot(fetch_humann_db("test"))
 #' testthat::expect_snapshot(fetch_humann_db("test"))
 #' testthat::expect_snapshot(fetch_humann_db("test", overwrite = TRUE))
@@ -171,9 +178,8 @@ fetch_humann_db <- function(annot = c("ec", "eggnog", "go", "ko", "pfam"),
   .make_humann_name(annot, version) %>%
     purrr::walk( ~ {
       need_download <- .file_db_exists(.x)
-      if (need_download | overwrite) { .get_from_aws(.x, overwrite) }
+      if (need_download | overwrite) { .get_from_aws(.x) }
     })
 
   invisible(TRUE)
 }
-

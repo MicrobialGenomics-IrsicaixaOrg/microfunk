@@ -1,4 +1,4 @@
-# Function fetch_humann_db() @ L155
+# Function fetch_humann_db() @ L162
 
     Code
       fetch_humann_db("test")
@@ -6,7 +6,8 @@
       
       -- Fetching HUMAnN3 databases --------------------------------------------------
       i Cache directory .microfunk already exists
-      v File test_v201901b.tsv.gz cached
+      i File test_v201901b.tsv.gz not cached
+      i Fetching test_v201901b.tsv.gz from AWS
 
 ---
 
@@ -28,5 +29,4 @@
       i Cache directory .microfunk already exists
       v File test_v201901b.tsv.gz cached
       i Fetching test_v201901b.tsv.gz from AWS
-      v File test_v201901b.tsv.gz downloaded to ~/.microfunk
 

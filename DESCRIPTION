@@ -18,9 +18,9 @@ URL: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk,
 BugReports: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/issues
 biocViews: Software, Sequencing, Microbiome, Metagenomics
 Imports: 
-    aws.s3,
     Biobase,
     cli,
+    curl,
     data.table,
     dplyr,
     ggplot2,
