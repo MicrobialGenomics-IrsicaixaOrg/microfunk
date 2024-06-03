@@ -23,7 +23,7 @@
 #'
 #' @keywords internal
 #' @noRd
-.make_humann_name <- function(annot, version) {
+.make_humann_name <- function(annot, version = "v201901b") {
   paste0(annot, "_", version, ".tsv.gz")
 }
 
@@ -79,7 +79,7 @@
   } else {
     cli::cli_alert_info("File {cli::col_blue(file_name)} not cached")
   }
-  !exists
+  exists
 }
 
 #' Download a file from AWS
@@ -177,8 +177,8 @@ fetch_humann_db <- function(annot = c("ec", "eggnog", "go", "ko", "pfam"),
 
   .make_humann_name(annot, version) %>%
     purrr::walk( ~ {
-      need_download <- .file_db_exists(.x)
-      if (need_download | overwrite) { .get_from_aws(.x) }
+      exists <- .file_db_exists(.x)
+      if (!exists | overwrite) { .get_from_aws(.x) }
     })
 
   invisible(TRUE)

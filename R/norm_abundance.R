@@ -116,7 +116,7 @@ norm_abundance <- function(se, norm, .batch_size = 10){
     seq_along(batches) %>%
     purrr::map_dfc( ~ {
       batch <- c("function_id", colnames(data)[batches[[.x]]])
-      temp_df <- data[, batch, drop = FALSE]
+      temp_df <- data[, batch]
       temp_res <- .normalize(temp_df, norm, classification)
       if (.x != 1) { temp_res <- temp_res[, -1] }
       temp_res
