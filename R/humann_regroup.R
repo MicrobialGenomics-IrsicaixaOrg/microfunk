@@ -10,9 +10,10 @@ a <- function() {
 
 
 
-humann_regroup <- function(se, to = "pfam") {
+humann_regroup <- function(se, to = "pfam", version = "v201901b") {
 
-  .check_regroup()
+  # Checks
+  .check_regroup(se, to)
 
   dt <-
     SummarizedExperiment::assays(se)$humann %>%
@@ -26,14 +27,14 @@ humann_regroup <- function(se, to = "pfam") {
   db_exists <- .make_humann_name(to) %>% .file_db_exists()
   if (!db_exists) { fetch_humann_db(annot = to) }
 
-  ids <- data.table::fread(file.path(.cache_path(), .make_humann_name(to)))
+  ids <- data.table::fread(file.path(.cache_path(), .make_humann_name(to))) # Optimizar
   ids <- ids[uniref_90 %in% dt$uniref_90,]
 
   dt <- dt[ids, on = "uniref_90"]
   data.table::setcolorder(dt, c("id", "id_name"), after = "function_id")
   dt[, function_id := stringr::str_replace_all(function_id, paste0("UniRef90_", uniref_90), id)]
   dt <- dplyr::select(dt, -uniref_90, -id)
-  dt <- dt[, lapply(.SD, sum), .SDcols = 4:ncol(dt), by = .(function_id, id_name)]
+  dt <- dt[, lapply(.SD, sum), .SDcols = 3:ncol(dt), by = .(function_id, id_name)]
 
   se_dt <- dplyr::select(dt, -id_name) %>% data.frame(row.names = 1)
   SummarizedExperiment::SummarizedExperiment(

@@ -48,3 +48,31 @@ c("ec", "eggnog", "go", "ko", "pfam", "test") %>%
         opts = list(multipart = TRUE)
       )
   })
+
+#
+#
+#
+# df <-
+#   data.table::fread("~/Downloads/All_genefam.tsv")
+#
+# ids <- df %>%
+#   dplyr::filter(!stringr::str_detect(`# Gene Family`, "[|]")) %>%
+#   dplyr::pull(1) %>%
+#   .[1:10]
+#
+# df %>%
+#   dplyr::filter(`# Gene Family` %in% ids) %>%
+#   dplyr::select(1:5) %>%
+#   readr::write_tsv("inst/extdata/reduced_genfam_rpk_uniref.tsv")
+#
+# annot <- data.table::fread("~/.microfunk/humann_db/pfam_v201901b.tsv.gz")
+#
+# new_ids <- ids %>% stringr::str_remove_all("UniRef90_")
+#
+# annot <-
+#   dplyr::filter(annot, uniref_90 %in% new_ids) %>%  aws.s3::s3write_using(
+#     +     FUN = data.table::fwrite,
+#     +     bucket = "bioconductor-packages",
+#     +     object = paste0("microfunk/humann_db/test_v201901b.tsv.gz"),
+#     +     opts = list(multipart = TRUE)
+#     + )
