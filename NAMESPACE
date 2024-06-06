@@ -2,6 +2,7 @@
 
 export("%>%")
 export(fetch_humann_db)
+export(humann_regroup)
 export(norm_abundance)
 export(plt_lollipop)
 export(plt_volcano)
