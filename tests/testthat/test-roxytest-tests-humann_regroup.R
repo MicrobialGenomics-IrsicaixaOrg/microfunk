@@ -17,17 +17,17 @@ test_that("Function humann_regroup() @ L52", {
 
 test_that("Function .check_regroup() @ L123", {
   # Test SE annotation errors
-  meta <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
-  files <- system.file("extdata", package = "microfunk") %>%
+  meta <-  system.file("extdata", "reduced_meta.csv", package = "microfunk")
+  se_list <- system.file("extdata", package = "microfunk") %>%
    list.files(pattern = "reduced_genefam_rpk_uniref_error", full.names = TRUE) %>%
-   purrr::walk(~ read_humann(.x, meta)) %>%
-   purrr::walk(~ testthat::expect_error(.check_regroup(.x, to = "pfam")))
+     purrr::map(~ read_humann(.x, meta))
+   purrr::walk(se_list, ~ testthat::expect_error(.check_regroup(.x, to = "test")))
   
   # Test invalid annotation requested
-  read_humann(
-   file_path = system.file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk),
+  se <- read_humann(
+   file_path = system.file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk"),
    metadata = meta
-   ) %>%
-   testthat::expect_error(.check_regroup(to = "abc"))
+   )
+   testthat::expect_error(.check_regroup(se, to = "abc"))
 })
 

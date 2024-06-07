@@ -45,8 +45,8 @@
 #' @examples
 #' # Read HUMAnN3 & Regroup to PFAM annotation
 #' se_regrouped <- read_humann(
-#'   file_path = system-file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk"),
-#'   metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
+#'   file_path = system.file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk"),
+#'   metadata = system.file("extdata", "reduced_meta.csv", package = "microfunk")
 #'   ) %>%
 #'   humann_regroup(to = "pfam")
 humann_regroup <- function(se, to, version = "v201901b") {
@@ -108,18 +108,18 @@ humann_regroup <- function(se, to, version = "v201901b") {
 #' @autoglobal
 #' @tests
 #' # Test SE annotation errors
-#' meta <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
-#' files <- system.file("extdata", package = "microfunk") %>%
+#' meta <-  system.file("extdata", "reduced_meta.csv", package = "microfunk")
+#' se_list <- system.file("extdata", package = "microfunk") %>%
 #'  list.files(pattern = "reduced_genefam_rpk_uniref_error", full.names = TRUE) %>%
-#'  purrr::walk(~ read_humann(.x, meta)) %>%
-#'  purrr::walk(~ testthat::expect_error(.check_regroup(.x, to = "pfam")))
+#'    purrr::map(~ read_humann(.x, meta))
+#'  purrr::walk(se_list, ~ testthat::expect_error(.check_regroup(.x, to = "test")))
 #'
 #' # Test invalid annotation requested
-#' read_humann(
-#'  file_path = system.file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk),
+#' se <- read_humann(
+#'  file_path = system.file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk"),
 #'  metadata = meta
-#'  ) %>%
-#'  testthat::expect_error(.check_regroup(to = "abc"))
+#'  )
+#'  testthat::expect_error(.check_regroup(se, to = "abc"))
 .check_regroup <- function(se, to) {
   ids <- SummarizedExperiment::assays(se)$humann %>% rownames() %>% .[. != "UNMAPPED"]
   annot <- dplyr::case_when(

@@ -44,8 +44,8 @@ SummarizedExperiment object.
 \examples{
 # Read HUMAnN3 & Regroup to PFAM annotation
 se_regrouped <- read_humann(
-  file_path = system-file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk"),
-  metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
+  file_path = system.file("extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk"),
+  metadata = system.file("extdata", "reduced_meta.csv", package = "microfunk")
   ) \%>\%
   humann_regroup(to = "pfam")
 }
