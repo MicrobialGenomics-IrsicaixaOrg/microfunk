@@ -9,6 +9,7 @@ utils::globalVariables(c(
   # <plt_lollipop>
   # <plt_volcano>
   "feature",
+  # <run_deseq2>
   # <run_maaslin2>
   # <.create_MRexp>
   # <.extract_norm_method>
@@ -21,6 +22,10 @@ utils::globalVariables(c(
   # <run_maaslin2>
   # <.maaslin2_quietly>
   "heatmap_firt_n",
+  # <run_deseq2>
+  "log2FoldChange",
+  # <run_deseq2>
+  "padj",
   # <plt_lollipop>
   # <plt_volcano>
   "pval",
