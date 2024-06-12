@@ -40,7 +40,8 @@ Suggests:
     metagenomeSeq,
     ashr,
     apeglm,
-    R.utils
+    R.utils,
+    BiocStyle
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.3.0)
