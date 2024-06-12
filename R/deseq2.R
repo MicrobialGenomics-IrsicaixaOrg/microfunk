@@ -15,6 +15,11 @@
 #' @param factor A character string specifying the factor/categorical variable
 #'   to use for differential expression analysis. This should be a column name
 #'   in the colData of the SummarizedExperiment object.
+#' @param design A formula. the formula expresses how the counts for each gene
+#'   depend on the variables in colData. Many R formula are valid, including
+#'   designs with multiple variables, e.g., ~ group + condition, and designs
+#'   with interactions, e.g., ~ genotype + treatment + genotype:treatment. See
+#'   results for a variety of designs and how to extract results tables.
 #' @param test Either "Wald" or "LRT", which will then use either Wald
 #'   significance tests (defined by nbinomWaldTest), or the likelihood ratio
 #'   test on the difference in deviance between a full and reduced model formula
@@ -38,78 +43,101 @@
 #'   and significance indicators for each feature.
 #' @export
 #' @autoglobal
-#' @tests
+#' @examples
 #' # Def data paths
-#' metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+#' metadata <-
+#'   system.file("extdata", "ex_meta.csv", package = "microfunk")
 #' file_path <-
 #'   system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk")
 #'
 #' # Read HUMAnN3 & DESeq2 Analysis
 #' da_result <-
 #'   read_humann(file_path, metadata) %>%
-#'   run_deseq2(factor = "ARM",
-#'              test = "Wald",
-#'              fitType = "local")
+#'   run_deseq2(factor = "ARM")
 #'
 #' # Test number of significant associations
 #' da_result %>%
 #'   dplyr::filter(signif == TRUE) %>%
 #'   nrow() %>%
-#'   testthat::expect_equal(40)
+#'   testthat::expect_equal(41)
 #'
 #' # Test P-values
 #' da_result %>%
 #'   dplyr::pull(pvalue) %>%
 #'   mean() %>%
 #'   round(3) %>%
-#'   testthat::expect_equal(0.557)
+#'   testthat::expect_equal(0.555)
 #'
 #' # Test P-adjusted values
 #' da_result %>%
 #'   dplyr::pull(padj) %>%
 #'   mean(na.rm = TRUE) %>%
 #'   round(3) %>%
-#'   testthat::expect_equal(0.858)
+#'   testthat::expect_equal(0.857)
 #'
 #' @examples
 #' # Read HUMAnN3 & DESeq2 Analysis
 #' da_result <- read_humann(
 #'   file_path = system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk"),
 #'   metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
-#' ) %>% run_deseq2(factor = "ARM",
-#'                  test = "Wald",
-#'                  fitType = "local")
+#' ) %>% run_deseq2(factor = "ARM")
+#'
 #' da_result
 run_deseq2 <- function(se,
                        factor,
-                       test,
-                       fitType,
+                       design = NULL,
+                       test = "Wald",
+                       fitType = "local",
                        betaPrior = FALSE,
-                       type = "normal",
+                       type = "ashr",
                        max_significance = 0.05,
                        log2FC = 0,
-                       quiet = TRUE){
+                       quiet = TRUE) {
 
-  cts <- SummarizedExperiment::assays(se)$humann %>%
+
+  if (type %in% c("ashr", "apeglm")) {
+    tested <- try(find.package(type), silent = TRUE)
+    if (methods::is(tested, "try-error")) {
+      ins <- paste0('BiocManger::install("', type,'")') %>% cli::col_blue()
+      cli::cli_abort(c(
+        "i" = glue::glue('{cli::col_blue(type)} packege is not installed'),
+        "*" = glue::glue('Start a clean R session and then run: {ins}')
+      ))
+    }
+  }
+
+  cts <-
+    SummarizedExperiment::assays(se)$humann %>%
     tibble::as_tibble(rownames = "function_id") %>%
     dplyr::filter(!stringr::str_detect(function_id, "[|]")) %>%
     tibble::column_to_rownames(var = "function_id") %>%
     as.matrix() %>%
     round()
 
-  coldata <- SummarizedExperiment::colData(se) %>% as.data.frame()
+  coldata <-
+    SummarizedExperiment::colData(se) %>%
+    as.data.frame() %>%
+    dplyr::mutate(dplyr::across(dplyr::all_of(factor), as.factor))
 
-  dds <- DESeq2::DESeqDataSetFromMatrix(countData = cts,
-                                        colData = coldata,
-                                        design = stats::as.formula(
-                                          stringr::str_c("~", factor)))
-  da_result <- DESeq2::DESeq(dds)
+  if (is.null(design)) { design <- stringr::str_c("~", factor) }
+  if (!inherits(design, "formula")) { design <- stats::as.formula(design)}
 
-  cont <- coldata %>% dplyr::select(dplyr::all_of(factor)) %>% unique() %>% as.vector()
+  da_result <- DESeq2::DESeqDataSetFromMatrix(
+    countData = cts,
+    colData = coldata,
+    design = design
+  ) %>%
+    DESeq2::DESeq(
+      test = test,
+      fitType = fitType,
+      betaPrior = betaPrior,
+      quiet = quiet
+    )
 
+  cont <- coldata %>% dplyr::pull(factor) %>% levels()
   lfcs <- DESeq2::lfcShrink(
     dds = da_result,
-    contrast = c(factor, cont[[1]]),
+    contrast = c(factor, cont),
     type = type,
     quiet = quiet
   ) %>%
@@ -124,7 +152,6 @@ run_deseq2 <- function(se,
     )
 
   lfcs
-
 }
 
 

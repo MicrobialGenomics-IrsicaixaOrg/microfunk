@@ -7,10 +7,11 @@
 run_deseq2(
   se,
   factor,
-  test,
-  fitType,
+  design = NULL,
+  test = "Wald",
+  fitType = "local",
   betaPrior = FALSE,
-  type = "normal",
+  type = "ashr",
   max_significance = 0.05,
   log2FC = 0,
   quiet = TRUE
@@ -23,6 +24,12 @@ values as the assay and metadata as the column data.}
 \item{factor}{A character string specifying the factor/categorical variable
 to use for differential expression analysis. This should be a column name
 in the colData of the SummarizedExperiment object.}
+
+\item{design}{A formula. the formula expresses how the counts for each gene
+depend on the variables in colData. Many R formula are valid, including
+designs with multiple variables, e.g., ~ group + condition, and designs
+with interactions, e.g., ~ genotype + treatment + genotype:treatment. See
+results for a variety of designs and how to extract results tables.}
 
 \item{test}{Either "Wald" or "LRT", which will then use either Wald
 significance tests (defined by nbinomWaldTest), or the likelihood ratio
@@ -65,12 +72,42 @@ to improve estimate precision. Finally, it returns a tibble of results
 indicating significant changes between the specified experimental conditions.
 }
 \examples{
+# Def data paths
+metadata <-
+  system.file("extdata", "ex_meta.csv", package = "microfunk")
+file_path <-
+  system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk")
+
+# Read HUMAnN3 & DESeq2 Analysis
+da_result <-
+  read_humann(file_path, metadata) \%>\%
+  run_deseq2(factor = "ARM")
+
+# Test number of significant associations
+da_result \%>\%
+  dplyr::filter(signif == TRUE) \%>\%
+  nrow() \%>\%
+  testthat::expect_equal(41)
+
+# Test P-values
+da_result \%>\%
+  dplyr::pull(pvalue) \%>\%
+  mean() \%>\%
+  round(3) \%>\%
+  testthat::expect_equal(0.555)
+
+# Test P-adjusted values
+da_result \%>\%
+  dplyr::pull(padj) \%>\%
+  mean(na.rm = TRUE) \%>\%
+  round(3) \%>\%
+  testthat::expect_equal(0.857)
+
 # Read HUMAnN3 & DESeq2 Analysis
 da_result <- read_humann(
   file_path = system.file("extdata", "All_genefam_rpk_kegg.tsv", package = "microfunk"),
   metadata = system.file("extdata", "ex_meta.csv", package = "microfunk")
-) \%>\% run_deseq2(factor = "ARM",
-                 test = "Wald",
-                 fitType = "local")
+) \%>\% run_deseq2(factor = "ARM")
+
 da_result
 }
