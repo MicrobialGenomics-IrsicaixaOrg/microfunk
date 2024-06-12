@@ -100,8 +100,8 @@ run_deseq2 <- function(se,
     if (methods::is(tested, "try-error")) {
       ins <- paste0('BiocManger::install("', type,'")') %>% cli::col_blue()
       cli::cli_abort(c(
-        "i" = glue::glue('{cli::col_blue(type)} packege is not installed'),
-        "*" = glue::glue('Start a clean R session and then run: {ins}')
+        "i" = '{cli::col_blue(type)} packege is not installed',
+        "*" = 'Start a clean R session and then run: {ins}'
       ))
     }
   }

@@ -29,7 +29,6 @@ Imports:
     magrittr,
     methods,
     purrr,
-    R.utils,
     RColorBrewer,
     stats,
     stringr,
@@ -40,7 +39,8 @@ Suggests:
     knitr,
     metagenomeSeq,
     ashr,
-    apeglm
+    apeglm,
+    R.utils
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.3.0)

@@ -23,14 +23,14 @@ utils::globalVariables(c(
   # <run_maaslin2>
   # <.maaslin2_quietly>
   "heatmap_firt_n",
-  # <run_deseq2>
-  "log2FoldChange",
-  # <run_deseq2>
-  "padj",
   # <humann_regroup>
   "id",
   # <humann_regroup>
   "id_name",
+  # <run_deseq2>
+  "log2FoldChange",
+  # <run_deseq2>
+  "padj",
   # <plt_lollipop>
   # <plt_volcano>
   "pval",
