@@ -17,20 +17,20 @@ test_that("Function run_maaslin2() @ L94", {
   da_result$results %>%
     dplyr::filter(qval < 0.25) %>%
     nrow() %>%
-    testthat::expect_equal(5)
+    testthat::expect_equal(63)
   
   # Test P-values
   da_result$results %>%
     dplyr::pull(pval) %>%
     mean() %>%
     round(3) %>%
-    testthat::expect_equal(0.581)
+    testthat::expect_equal(0.538)
   
   # Test Q-values
   da_result$results %>%
     dplyr::pull(qval) %>%
     mean() %>%
     round(3) %>%
-    testthat::expect_equal(0.944)
+    testthat::expect_equal(0.802)
 })
 

@@ -77,6 +77,9 @@ jobs:
           echo ".libPaths('/__w/_temp/Library')" > ~/.Rprofile
           mkdir -p ~/.R
           echo "CFLAGS=-w" > ~/.R/Makevars
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
 
       ## Most of these steps are the same as the ones in
       ## https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml
@@ -142,11 +145,15 @@ jobs:
           ## Required for tcltk
           brew install xquartz --cask
 
+          ## AWS CLI
+          brew install awscli
+
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
         run: |
           ## Edit below if you have any Windows system dependencies
-        shell: Rscript {0}
+          curl "https://awscli.amazonaws.com/AWSCLIV2.msi" -o "AWSCLIV2.msi"
+          msiexec.exe /i AWSCLIV2.msi /qn
 
       - name: Install BiocManager
         run: |
