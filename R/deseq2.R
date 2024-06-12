@@ -32,6 +32,7 @@
 #'   is 0.05.
 #' @param log2FC A numeric value specifying the minimum absolute log2-fold
 #'   change threshold for considering a feature as significant. Default is 0.
+#' @param quiet Whether to print messages description
 #'
 #' @return A tibble containing log2-fold changes, p-values, p-adjusted values
 #'   and significance indicators for each feature.
@@ -104,13 +105,13 @@ run_deseq2 <- function(se,
                                           stringr::str_c("~", factor)))
   da_result <- DESeq2::DESeq(dds)
 
-  cont <- coldata %>% dplyr::select(all_of(factor)) %>% unique() %>% as.vector()
+  cont <- coldata %>% dplyr::select(dplyr::all_of(factor)) %>% unique() %>% as.vector()
 
   lfcs <- DESeq2::lfcShrink(
     dds = da_result,
     contrast = c(factor, cont[[1]]),
     type = type,
-    quiet = TRUE
+    quiet = quiet
   ) %>%
     tibble::as_tibble(rownames = "function_id") %>%
     dplyr::mutate(

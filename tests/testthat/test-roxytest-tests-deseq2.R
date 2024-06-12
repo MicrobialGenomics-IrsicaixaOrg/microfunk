@@ -2,7 +2,7 @@
 
 # File R/deseq2.R: @tests
 
-test_that("Function run_deseq2() @ L82", {
+test_that("Function run_deseq2() @ L83", {
   # Def data paths
   metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
   file_path <-

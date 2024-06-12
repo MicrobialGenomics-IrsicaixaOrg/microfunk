@@ -46,6 +46,8 @@ is 0.05.}
 
 \item{log2FC}{A numeric value specifying the minimum absolute log2-fold
 change threshold for considering a feature as significant. Default is 0.}
+
+\item{quiet}{Whether to print messages description}
 }
 \value{
 A tibble containing log2-fold changes, p-values, p-adjusted values

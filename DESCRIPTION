@@ -21,6 +21,7 @@ Imports:
     Biobase,
     cli,
     data.table,
+    DESeq2,
     dplyr,
     ggplot2,
     ggrepel,
@@ -46,4 +47,3 @@ Config/roxyglobals/filename: globals.R
 Config/roxyglobals/unique: TRUE
 Config/testthat/parallel: true
 RoxygenNote: 7.3.1
-
