@@ -21,13 +21,14 @@ Imports:
     cli,
     curl,
     data.table,
+    DESeq2,
     dplyr,
     ggplot2,
     ggrepel,
     Maaslin2,
     magrittr,
+    methods,
     purrr,
-    R.utils,
     RColorBrewer,
     stats,
     stringr,
@@ -36,7 +37,10 @@ Imports:
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    metagenomeSeq
+    metagenomeSeq,
+    ashr,
+    apeglm,
+    R.utils
 Config/testthat/edition: 3
 Depends: 
     R (>= 4.3.0)

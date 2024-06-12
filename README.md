@@ -80,17 +80,18 @@ print(citation('microfunk'), bibtex = TRUE)
 #> To cite package 'microfunk' in publications use:
 #> 
 #>   Farré-Badia J (????). _microfunk: What the Package Does (One Line,
-#>   Title Case)_.
-#>   https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk,
-#>   https://microbialgenomics-irsicaixaorg.github.io/microfunk/.
+#>   Title Case)_. R package version 0.99.0,
+#>   https://microbialgenomics-irsicaixaorg.github.io/microfunk/,
+#>   <https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {microfunk: What the Package Does (One Line, Title Case)},
 #>     author = {Judit Farré-Badia},
-#>     note = {https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk,
+#>     note = {R package version 0.99.0, 
 #> https://microbialgenomics-irsicaixaorg.github.io/microfunk/},
+#>     url = {https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk},
 #>   }
 ```
 
@@ -105,28 +106,3 @@ Code of Conduct](http://bioconductor.org/about/code-of-conduct/). By
 contributing to this project, you agree to abide by its terms.
 
 ## Development tools
-
-- Continuous code testing is possible thanks to [GitHub
-  actions](https://www.tidyverse.org/blog/2020/04/usethis-1-6-0/)
-  through *[usethis](https://CRAN.R-project.org/package=usethis)*,
-  *[remotes](https://CRAN.R-project.org/package=remotes)*, and
-  *[rcmdcheck](https://CRAN.R-project.org/package=rcmdcheck)* customized
-  to use [Bioconductor’s docker
-  containers](https://www.bioconductor.org/help/docker/) and
-  *[BiocCheck](https://bioconductor.org/packages/3.18/BiocCheck)*.
-- Code coverage assessment is possible thanks to
-  [codecov](https://codecov.io/gh) and
-  *[covr](https://CRAN.R-project.org/package=covr)*.
-- The [documentation website](http://juditfarreb.github.io/microfunk) is
-  automatically updated thanks to
-  *[pkgdown](https://CRAN.R-project.org/package=pkgdown)*.
-- The code is styled automatically thanks to
-  *[styler](https://CRAN.R-project.org/package=styler)*.
-- The documentation is formatted thanks to
-  *[devtools](https://CRAN.R-project.org/package=devtools)* and
-  *[roxygen2](https://CRAN.R-project.org/package=roxygen2)*.
-
-For more details, check the `dev` directory.
-
-This package was developed using
-*[biocthis](https://bioconductor.org/packages/3.18/biocthis)*.

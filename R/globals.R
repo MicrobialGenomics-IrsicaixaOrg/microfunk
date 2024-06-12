@@ -10,6 +10,7 @@ utils::globalVariables(c(
   # <plt_lollipop>
   # <plt_volcano>
   "feature",
+  # <run_deseq2>
   # <humann_regroup>
   # <run_maaslin2>
   # <.extract_norm_method>
@@ -26,6 +27,10 @@ utils::globalVariables(c(
   "id",
   # <humann_regroup>
   "id_name",
+  # <run_deseq2>
+  "log2FoldChange",
+  # <run_deseq2>
+  "padj",
   # <plt_lollipop>
   # <plt_volcano>
   "pval",
