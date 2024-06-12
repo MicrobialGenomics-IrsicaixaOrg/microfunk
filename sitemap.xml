@@ -1,48 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-humann_metadata_check.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-humann_path_checks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-humann_tbl_checks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/norm_abundance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plt_lollipop.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plt_volcano.html</loc>
-  </url>
-  <url>
-    <loc>/reference/read_humann.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_maaslin2.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/dot-check_regroup.html</loc></url>
+<url><loc>/reference/dot-humann_metadata_check.html</loc></url>
+<url><loc>/reference/dot-humann_path_checks.html</loc></url>
+<url><loc>/reference/dot-humann_tbl_checks.html</loc></url>
+<url><loc>/reference/fetch_humann_db.html</loc></url>
+<url><loc>/reference/humann_regroup.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/microfunk-package.html</loc></url>
+<url><loc>/reference/norm_abundance.html</loc></url>
+<url><loc>/reference/pipe.html</loc></url>
+<url><loc>/reference/plt_lollipop.html</loc></url>
+<url><loc>/reference/plt_volcano.html</loc></url>
+<url><loc>/reference/read_humann.html</loc></url>
+<url><loc>/reference/run_maaslin2.html</loc></url>
 </urlset>
+

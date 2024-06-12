@@ -41,7 +41,7 @@ to either CPM units (copies per million) or relative abundance."><!-- mathjax --
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Normalize gene family or pathway abundance data in a SummarizedExperiment object</h1>
-    <small class="dont-index">Source: <a href="https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/blob/HEAD/R/norm_abundance.R" class="external-link"><code>R/norm_abundance.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/blob/devel/R/norm_abundance.R" class="external-link"><code>R/norm_abundance.R</code></a></small>
     <div class="hidden name"><code>norm_abundance.Rd</code></div>
     </div>
     <div class="ref-description">
@@ -52,21 +52,23 @@ assay and metadata as the column data
 to either CPM units (copies per million) or relative abundance.</p>
     </div>
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">norm_abundance</span><span class="op">(</span><span class="va">se</span>, <span class="va">norm</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">norm_abundance</span><span class="op">(</span><span class="va">se</span>, <span class="va">norm</span>, .batch_size <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
     </div>
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt id="arg-se">se<a class="anchor" aria-label="anchor" href="#arg-se"></a></dt>
+<dl><dt id="arg-se">se<a class="anchor" aria-label="anchor" href="#arg-se"></a></dt>
 <dd><p>A SummarizedExperiment object containing gene/pathway abundance
 values as the assay and metadata as the column data.</p></dd>
 <dt id="arg-norm">norm<a class="anchor" aria-label="anchor" href="#arg-norm"></a></dt>
 <dd><p>A character string specifying the normalization method to apply.
-Supported methods are 'cpm' for copies per million and 'relab' for relative
-abundance.</p></dd>
+Supported methods are 'cpm' for copies per million and 'relab' for relative</p></dd>
+<dt id="arg--batch-size">.batch_size<a class="anchor" aria-label="anchor" href="#arg--batch-size"></a></dt>
+<dd><p>An integer specifying the number of columns to process in each
+batch. Default is 10.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-<p>An updated SE object with normalized abundance values in the assay
+    <p>An updated SE object with normalized abundance values in the assay
 slot.</p>
     </div>
     <div id="details">
