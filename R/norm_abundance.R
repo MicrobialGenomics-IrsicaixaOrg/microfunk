@@ -16,7 +16,8 @@
 #'   values as the assay and metadata as the column data.
 #' @param norm A character string specifying the normalization method to apply.
 #'   Supported methods are 'cpm' for copies per million and 'relab' for relative
-#'   abundance.
+#' @param .batch_size An integer specifying the number of columns to process in each
+#'   batch. Default is 10.
 #'
 #' @return An updated SE object with normalized abundance values in the assay
 #'   slot.
@@ -85,7 +86,7 @@
 #' transformed_data <-
 #'   read_humann(file_path, metadata) %>%
 #'   norm_abundance(norm = "relab")
-norm_abundance <- function(se, norm){
+norm_abundance <- function(se, norm, .batch_size = 10){
 
   if (norm != "cpm" && norm != "relab"){
     cli::cli_abort(c(
@@ -108,17 +109,21 @@ norm_abundance <- function(se, norm){
     ))
   }
 
-  norm_tbl <- dplyr::case_when(
-    norm == "cpm" & classification == "rpk" ~ .rpk2cpm(data),
-    norm == "cpm" & classification == "relab" ~ .relab2cpm(data),
-    norm == "relab" & classification == "rpk" ~ .rpk2relab(data),
-    norm == "relab" & classification == "cpm" ~ .cpm2relab(data)
-  )
+  # Batch Normalization
+  batch_size <- 25
+  batches <- split(seq(2, ncol(data)), ceiling(seq_along(seq(2, ncol(data)))/batch_size))
+  norm_df <-
+    seq_along(batches) %>%
+    purrr::map_dfc( ~ {
+      batch <- c("function_id", colnames(data)[batches[[.x]]])
+      temp_df <- data[, batch]
+      temp_res <- .normalize(temp_df, norm, classification)
+      if (.x != 1) { temp_res <- temp_res[, -1] }
+      temp_res
+    }) %>% data.frame(row.names = 1)
 
-  # update SE object
-  SummarizedExperiment::assays(se) <- list(humann = norm_tbl)
+  SummarizedExperiment::assays(se) <- list(humann = norm_df)
   se
-
 }
 
 #' Extract abundance data normalization method
@@ -191,7 +196,8 @@ norm_abundance <- function(se, norm){
 #' input_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 )
+#'   sample2 = column2
+#' )
 #'
 #' # Expected output tibble
 #' column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
@@ -199,29 +205,20 @@ norm_abundance <- function(se, norm){
 #' output_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 ) %>%
-#'   data.frame(row.names = 1)
+#'   sample2 = column2
+#' ) %>% data.table::as.data.table()
 #'
 #' testthat::expect_equal(.rpk2cpm(input_tbl), output_tbl)
 .rpk2cpm <- function(tbl) {
-
-  # scale by cat
-  tbl_group <-
-    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x) * 1e6))
-
-  # scale by strat
-  tbl_strat <-
-    dplyr::filter(tbl, stringr::str_detect(function_id, "[|]|UNMAPPED")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x) * 1e6))
-
-  norm_tbl <-
-    dplyr::bind_rows(tbl_group, tbl_strat) %>%
-    dplyr::arrange(function_id) %>%
-    dplyr::distinct(function_id, .keep_all = TRUE) %>%
-    data.frame(row.names = 1)
-
-  norm_tbl
+  dt <- data.table::as.data.table(tbl)
+  c_num <- names(dt)[sapply(dt, is.numeric)]
+  cat <- dt[!grepl("\\|", function_id)]
+  strat <- dt[grepl("\\|", function_id) | function_id == "UNMAPPED"]
+  cat[, (c_num) := lapply(.SD, function(x) x / sum(x) * 1e6), .SDcols = c_num]
+  strat[, (c_num) := lapply(.SD, function(x) x / sum(x) * 1e6), .SDcols = c_num]
+  norm_tbl <- data.table::rbindlist(list(cat, strat))
+  data.table::setorder(norm_tbl, function_id)
+  unique(norm_tbl, by = "function_id")
 }
 
 #' Convert relative abundance units to CPM
@@ -246,7 +243,8 @@ norm_abundance <- function(se, norm){
 #' input_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 )
+#'   sample2 = column2
+#' )
 #'
 #' # Expected output tibble
 #' column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
@@ -254,29 +252,20 @@ norm_abundance <- function(se, norm){
 #' output_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 ) %>%
-#'   data.frame(row.names = 1)
+#'   sample2 = column2
+#' ) %>% data.table::as.data.table()
 #'
 #' testthat::expect_equal(.relab2cpm(input_tbl), output_tbl)
 .relab2cpm <- function(tbl){
-
-  # scale by cat
-  tbl_group <-
-    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x * 1e6))
-
-  # scale by strat
-  tbl_strat <-
-    dplyr::filter(tbl, stringr::str_detect(function_id, "[|]|UNMAPPED")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x * 1e6))
-
-  norm_tbl <-
-    dplyr::bind_rows(tbl_group, tbl_strat) %>%
-    dplyr::arrange(function_id) %>%
-    dplyr::distinct(function_id, .keep_all = TRUE) %>%
-    data.frame(row.names = 1)
-
-  norm_tbl
+  dt <- data.table::as.data.table(tbl)
+  c_num <- names(dt)[sapply(dt, is.numeric)]
+  cat <- dt[!grepl("\\|", function_id)]
+  strat <- dt[grepl("\\|", function_id) | function_id == "UNMAPPED"]
+  cat[, (c_num) := lapply(.SD, function(x) x * 1e6), .SDcols = c_num]
+  strat[, (c_num) := lapply(.SD, function(x) x * 1e6), .SDcols = c_num]
+  norm_tbl <- data.table::rbindlist(list(cat, strat))
+  data.table::setorder(norm_tbl, function_id)
+  unique(norm_tbl, by = "function_id")
 }
 
 
@@ -302,7 +291,8 @@ norm_abundance <- function(se, norm){
 #' input_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 )
+#'   sample2 = column2
+#' )
 #'
 #' # Expected output tibble
 #' column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
@@ -310,29 +300,20 @@ norm_abundance <- function(se, norm){
 #' output_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 ) %>%
-#'   data.frame(row.names = 1)
+#'   sample2 = column2
+#' ) %>% data.table::as.data.table()
 #'
 #' testthat::expect_equal(.rpk2relab(input_tbl), output_tbl)
 .rpk2relab <- function(tbl){
-
-  # scale by cat
-  tbl_group <-
-    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x)))
-
-  # scale by strat
-  tbl_strat <-
-    dplyr::filter(tbl, stringr::str_detect(function_id, "[|]|UNMAPPED")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / sum(.x)))
-
-  norm_tbl <-
-    dplyr::bind_rows(tbl_group, tbl_strat) %>%
-    dplyr::arrange(function_id) %>%
-    dplyr::distinct(function_id, .keep_all = TRUE) %>%
-    data.frame(row.names = 1)
-
-  norm_tbl
+  dt <- data.table::as.data.table(tbl)
+  c_num <- names(dt)[sapply(dt, is.numeric)]
+  cat <- dt[!grepl("\\|", function_id)]
+  strat <- dt[grepl("\\|", function_id) | function_id == "UNMAPPED"]
+  cat[, (c_num) := lapply(.SD, function(x) x / sum(x)), .SDcols = c_num]
+  strat[, (c_num) := lapply(.SD, function(x) x / sum(x)), .SDcols = c_num]
+  norm_tbl <- data.table::rbindlist(list(cat, strat))
+  data.table::setorder(norm_tbl, function_id)
+  unique(norm_tbl, by = "function_id")
 }
 
 #' Convert CPM units to relative abundance
@@ -357,35 +338,49 @@ norm_abundance <- function(se, norm){
 #' input_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 )
-#'
+#'   sample2 = column2
+#' )
 #' # Expected output tibble
 #' column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
 #' column2 <- c(0.04, 0.04, 0.8, 0.72, 0.08, 0.16)
 #' output_tbl <- tibble::tibble(
 #'   function_id = column1,
 #'   sample1 = column2,
-#'   sample2 = column2 ) %>%
-#'   data.frame(row.names = 1)
+#'   sample2 = column2
+#' ) %>% data.table::as.data.table()
 #'
 #' testthat::expect_equal(.cpm2relab(input_tbl), output_tbl)
 .cpm2relab <- function(tbl){
+  dt <- data.table::as.data.table(tbl)
+  c_num <- names(dt)[sapply(dt, is.numeric)]
+  cat <- dt[!grepl("\\|", function_id)]
+  strat <- dt[grepl("\\|", function_id) | function_id == "UNMAPPED"]
+  cat[, (c_num) := lapply(.SD, function(x) x / 1e6), .SDcols = c_num]
+  strat[, (c_num) := lapply(.SD, function(x) x / 1e6), .SDcols = c_num]
+  norm_tbl <- data.table::rbindlist(list(cat, strat))
+  data.table::setorder(norm_tbl, function_id)
+  unique(norm_tbl, by = "function_id")
+}
 
-  # scale by cat
-  tbl_group <-
-    dplyr::filter(tbl, !stringr::str_detect(function_id, "[|]")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / 1e6))
-
-  # scale by strat
-  tbl_strat <-
-    dplyr::filter(tbl, stringr::str_detect(function_id, "[|]|UNMAPPED")) %>%
-    dplyr::mutate(dplyr::across(dplyr::where(is.numeric), ~ .x / 1e6))
-
-  norm_tbl <-
-    dplyr::bind_rows(tbl_group, tbl_strat) %>%
-    dplyr::arrange(function_id) %>%
-    dplyr::distinct(function_id, .keep_all = TRUE) %>%
-    data.frame(row.names = 1)
-
-  norm_tbl
+#' Normalize data based on specified method and classification
+#'
+#' This function normalizes a given data table based on the specified
+#' normalization method and classification. It supports converting between CPM
+#' and RPK, and between CPM and relative abundance (relab).
+#'
+#' @param tbl A data frame containing the data to be normalized.
+#' @param norm A character string specifying the normalization method. Accepts
+#'   "cpm" or "relab".
+#' @param classification A character string specifying the classification of the
+#'   data. Accepts "rpk" or "relab".
+#' @return A data frame with normalized data.
+#' @keywords internal
+#' @autoglobal
+#' @noRd
+.normalize <- function(tbl, norm, classification) {
+  if (norm == "cpm" & classification == "rpk") { res <- .rpk2cpm(tbl) }
+  if (norm == "cpm" & classification == "relab") { res <- .relab2cpm(tbl) }
+  if (norm == "relab" & classification == "rpk") { res <- .rpk2relab(tbl) }
+  if (norm == "relab" & classification == "cpm") { res <- .cpm2relab(tbl) }
+  res
 }
