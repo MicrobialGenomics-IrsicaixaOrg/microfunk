@@ -3,7 +3,7 @@
 # File R/humann_db.R: @tests
 
 test_that("Function fetch_humann_db() @ L162", {
-  # Remove existen file
+  # Remove existing file
   file.remove(file.path("~/.microfunk/humann_db", "test_v201901b.tsv.gz"))
   
   # Normal tests

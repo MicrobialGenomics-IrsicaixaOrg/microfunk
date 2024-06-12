@@ -18,17 +18,16 @@ URL: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk,
 BugReports: https://github.com/MicrobialGenomics-IrsicaixaOrg/microfunk/issues
 biocViews: Software, Sequencing, Microbiome, Metagenomics
 Imports: 
-    Biobase,
     cli,
     curl,
     data.table,
     dplyr,
     ggplot2,
     ggrepel,
-    glue,
     Maaslin2,
     magrittr,
     purrr,
+    R.utils,
     RColorBrewer,
     stats,
     stringr,

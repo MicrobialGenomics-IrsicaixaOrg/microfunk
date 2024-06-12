@@ -140,7 +140,7 @@
 #' @return invisible TRUE
 #' @export
 #' @tests
-#' # Remove existen file
+#' # Remove existing file
 #' file.remove(file.path("~/.microfunk/humann_db", "test_v201901b.tsv.gz"))
 #'
 #' # Normal tests
