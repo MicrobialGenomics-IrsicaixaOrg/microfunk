@@ -19,6 +19,18 @@
     <loc>/reference/dot-check_regroup.html</loc>
   </url>
   <url>
+    <loc>/reference/dot-da_homogenization.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-deseq_homogenize.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-deseq_lollipop.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-deseq_volcano.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-humann_metadata_check.html</loc>
   </url>
   <url>
@@ -26,6 +38,15 @@
   </url>
   <url>
     <loc>/reference/dot-humann_tbl_checks.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-maaslin_homogenize.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-maaslin_lollipop.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-maaslin_volcano.html</loc>
   </url>
   <url>
     <loc>/reference/fetch_humann_db.html</loc>
