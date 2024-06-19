@@ -2,14 +2,15 @@
 
 utils::globalVariables(c(
   # <.check_regroup>
-  # <plt_lollipop>
   ".",
-  # <plt_lollipop>
-  # <plt_volcano>
+  # <.maaslin_homogenize>
   "coef",
   # <plt_lollipop>
   # <plt_volcano>
+  "da_method",
+  # <.maaslin_homogenize>
   "feature",
+  # <.deseq_homogenize>
   # <run_deseq2>
   # <humann_regroup>
   # <run_maaslin2>
@@ -27,15 +28,23 @@ utils::globalVariables(c(
   "id",
   # <humann_regroup>
   "id_name",
+  # <.deseq_homogenize>
+  "lfcSE",
+  # <.deseq_homogenize>
   # <run_deseq2>
   "log2FoldChange",
+  # <.maaslin_homogenize>
+  # <.deseq_homogenize>
+  "metadata",
+  # <.deseq_homogenize>
   # <run_deseq2>
   "padj",
-  # <plt_lollipop>
-  # <plt_volcano>
+  # <.maaslin_homogenize>
   "pval",
-  # <plt_lollipop>
-  # <plt_volcano>
+  # <.deseq_homogenize>
+  "pvalue",
+  # <.maaslin_homogenize>
+  # <.maaslin2_quietly>
   "qval",
   # <humann_regroup>
   "uniref_90",

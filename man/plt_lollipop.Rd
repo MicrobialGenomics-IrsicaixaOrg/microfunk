@@ -7,31 +7,33 @@
 plt_lollipop(da_result)
 }
 \arguments{
-\item{da_result}{The result of the MaAsLin2 differential analysis.}
+\item{da_result}{A tibble containing the result of the differential analysis.}
 }
 \value{
 A lollipop plot visualizing differential abundance of microbial
 features.
 }
 \description{
-This function generates a lollipop plot based on the results of a MaAsLin2
-analysis to visualize the differential abundance of microbial gene families
-or pathways (features) associated with specific fixed effects. It only
-includes significant features with a q-value < 0.05.
+This function generates a lollipop plot based on the results of a MaAsLin2 or
+DESeq2 analysis to visualize the differential abundance of microbial gene
+families or pathways (features) associated with specific categorical
+variables. It only includes significant features with a q-value < 0.05 (for
+MaAsLin2) or a p-adjusted value < 0.05 (for DESeq2).
 }
 \details{
-The x-axis represents the coefficient or effect size of each feature,
-indicating the magnitude and direction of change associated with the chosen
-fixed effect. The y-axis represents the features ordered by their coefficient
-values.
+The x-axis represents the coefficient/effect size (for MaAsLin2) or
+log2FoldChange (for DESeq2) of each feature, indicating the magnitude and
+direction of change associated with the chosen categorical variable. The
+y-axis represents the features ordered by their coefficient values (for
+MaAsLin2) or log2FoldChange (for DESeq2).
 
 Each feature is depicted as a line segment originating from the origin (0 on
-the x-axis) and extending to the corresponding coefficient value on the
-x-axis. Negative coefficient values indicate a decrease in abundance, while
-positive ones indicate an increase in abundance. The color of each feature
-segment is determined by the statistical significance of the differences,
-represented by a color gradient scale using the negative logarithm of
-p-values.
+the x-axis) and extending to the corresponding coefficient/log2FC value on
+the x-axis. Negative coefficient/log2FC values indicate a decrease in
+abundance, while positive ones indicate an increase in abundance. The color
+of each feature segment is determined by the statistical significance of the
+differences, represented by a color gradient scale using the negative
+logarithm of p-values.
 }
 \examples{
 # Def data paths

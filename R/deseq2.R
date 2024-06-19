@@ -37,7 +37,7 @@
 #'   is 0.05.
 #' @param log2FC A numeric value specifying the minimum absolute log2-fold
 #'   change threshold for considering a feature as significant. Default is 0.
-#' @param quiet Whether to print messages description
+#' @param quiet Whether to print messages description. Default is TRUE.
 #'
 #' @return A tibble containing log2-fold changes, p-values, p-adjusted values
 #'   and significance indicators for each feature.
@@ -63,14 +63,14 @@
 #'
 #' # Test P-values
 #' da_result %>%
-#'   dplyr::pull(pvalue) %>%
+#'   dplyr::pull(p_value) %>%
 #'   mean() %>%
 #'   round(3) %>%
 #'   testthat::expect_equal(0.555)
 #'
 #' # Test P-adjusted values
 #' da_result %>%
-#'   dplyr::pull(padj) %>%
+#'   dplyr::pull(padj_value) %>%
 #'   mean(na.rm = TRUE) %>%
 #'   round(3) %>%
 #'   testthat::expect_equal(0.857)
@@ -98,7 +98,7 @@ run_deseq2 <- function(se,
   if (type %in% c("ashr", "apeglm")) {
     tested <- try(find.package(type), silent = TRUE)
     if (methods::is(tested, "try-error")) {
-      ins <- paste0('BiocManger::install("', type,'")') %>% cli::col_blue()
+      ins <- paste0('BiocManager::install("', type,'")') %>% cli::col_blue()
       cli::cli_abort(c(
         "i" = '{cli::col_blue(type)} packege is not installed',
         "*" = 'Start a clean R session and then run: {ins}'
@@ -143,13 +143,14 @@ run_deseq2 <- function(se,
   ) %>%
     tibble::as_tibble(rownames = "function_id") %>%
     dplyr::mutate(
-      effect = log2FoldChange,
       signif = ifelse(
         padj < max_significance & abs(log2FoldChange) >= log2FC,
         TRUE,
         FALSE
       )
-    )
+    ) %>%
+    dplyr::mutate(metadata = factor) %>%
+    .da_homogenization()
 
   lfcs
 }

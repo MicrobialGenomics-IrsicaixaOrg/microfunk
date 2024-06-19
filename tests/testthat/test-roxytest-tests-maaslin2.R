@@ -14,21 +14,21 @@ test_that("Function run_maaslin2() @ L94", {
     run_maaslin2(fixed_effects = "ARM")
   
   # Test number of significant associations
-  da_result$results %>%
-    dplyr::filter(qval < 0.25) %>%
+  da_result %>%
+    dplyr::filter(signif == TRUE) %>%
     nrow() %>%
     testthat::expect_equal(63)
   
   # Test P-values
-  da_result$results %>%
-    dplyr::pull(pval) %>%
+  da_result %>%
+    dplyr::pull(p_value) %>%
     mean() %>%
     round(3) %>%
     testthat::expect_equal(0.538)
   
   # Test Q-values
-  da_result$results %>%
-    dplyr::pull(qval) %>%
+  da_result %>%
+    dplyr::pull(q_value) %>%
     mean() %>%
     round(3) %>%
     testthat::expect_equal(0.802)

@@ -85,7 +85,7 @@ provided as a string of 'variable,reference' (semi-colon delimited for
 multiple variables).}
 }
 \value{
-Results of the MaAsLin2 analysis on the console.
+Results of the MaAsLin2 analysis as a tibble.
 }
 \description{
 This function performs a MaAsLin2 analysis

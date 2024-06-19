@@ -7,28 +7,30 @@
 plt_volcano(da_result)
 }
 \arguments{
-\item{da_result}{The result of the MaAsLin2 differential analysis.}
+\item{da_result}{A tibble containing the result of the differential analysis.}
 }
 \value{
 A volcano plot visualizing differential abundance of microbial
 features.
 }
 \description{
-This function generates a volcano plot based on the results of a MaAsLin2
-analysis in order to visualize the differential abundance of microbial gene
-families or pathways (features) associated with specific fixed effects.
+This function generates a volcano plot based on the results of a differential
+abundance analysis in order to visualize the differential abundance of
+microbial gene families or pathways (features) associated with specific fixed
+effects.
 }
 \details{
-The x-axis represents the coefficient or effect size of each feature,
-indicating the magnitude and direction of change associated with the chosen
-fixed effect. The y-axis represents the statistical significance of the
-differences (negative logarithm of the p-values).
+The x-axis represents the coefficient/effect size (for MaAsLin2 DA) or
+log2FoldChange (for DESeq2 DA) of each feature, indicating the magnitude and
+direction of change associated with the chosen categorical variable. The
+y-axis represents the statistical significance of the differences (negative
+logarithm of the p-values).
 
 Each point on the plot corresponds to a gene family or pathway, with its
 position determined by both its effect size and statistical significance.
-Only features with a q-value < 0.05 are deemed significant and therefore
-colored, in red if its abundance increases or blue if its abundance
-decreases.
+Only features with a q-value < 0.05 (for MaAsLin2) or p-adjusted value < 0.05
+(for DESeq2)  are deemed significant and therefore colored, in red if its
+abundance increases or blue if its abundance decreases.
 }
 \examples{
 # Def data paths
