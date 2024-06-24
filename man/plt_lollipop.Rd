@@ -4,10 +4,14 @@
 \alias{plt_lollipop}
 \title{Generate a Lollipop Plot for MaAsLin2 Analysis Results}
 \usage{
-plt_lollipop(da_result)
+plt_lollipop(da_result, n)
 }
 \arguments{
 \item{da_result}{A tibble containing the result of the differential analysis.}
+
+\item{n}{Maximum number of significant associations to be displayed on the
+plot in ascending order of q-value (for MaAsLin2) or p-adjusted value (for
+DESeq2).}
 }
 \value{
 A lollipop plot visualizing differential abundance of microbial
@@ -46,5 +50,5 @@ da_result <-
   run_maaslin2(fixed_effects = "ARM")
 
 # Lollipop Plot
-plt_lollipop(da_result)
+plt_lollipop(da_result, n = 20)
 }

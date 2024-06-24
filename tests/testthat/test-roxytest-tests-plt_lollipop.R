@@ -2,7 +2,7 @@
 
 # File R/plt_lollipop.R: @tests
 
-test_that("Function plt_lollipop() @ L79", {
+test_that("Function plt_lollipop() @ L82", {
   # Def data paths
   metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
   file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
@@ -16,8 +16,8 @@ test_that("Function plt_lollipop() @ L79", {
    run_deseq2(factor = "ARM")
   
   # Lollipop Plot
-  plt1 <- plt_lollipop(da_maaslin)
-  plt2 <- plt_lollipop(da_deseq)
+  plt1 <- plt_lollipop(da_maaslin, n = 20)
+  plt2 <- plt_lollipop(da_deseq, n = 20)
   
   # Check ggplot object
   testthat::expect_true("ggplot" %in% class(plt1))
@@ -38,6 +38,6 @@ test_that("Function plt_lollipop() @ L79", {
   # Check unknown input type
   da_unknown <- da_maaslin %>%
    dplyr::mutate(da_method = "unkown")
-  testthat::expect_error(plt_lollipop(da_unknown))
+  testthat::expect_error(plt_lollipop(da_unknown, n = 20))
 })
 

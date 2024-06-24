@@ -4,10 +4,13 @@
 \alias{.maaslin_lollipop}
 \title{Plot MaAsLin2 Lollipop Plot}
 \usage{
-.maaslin_lollipop(da_result)
+.maaslin_lollipop(da_result, n)
 }
 \arguments{
 \item{da_result}{A tibble containing the results of the MaAsLin2 DA analysis.}
+
+\item{n}{Maximum number of significant associations to be displayed on the
+plot in ascending order of q-value.}
 }
 \value{
 A ggplot2 object representing the lollipop plot.

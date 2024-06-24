@@ -21,6 +21,9 @@
 #' logarithm of p-values.
 #'
 #' @param da_result A tibble containing the result of the differential analysis.
+#' @param n Maximum number of significant associations to be displayed on the
+#'   plot in ascending order of q-value (for MaAsLin2) or p-adjusted value (for
+#'   DESeq2).
 #'
 #' @return A lollipop plot visualizing differential abundance of microbial
 #'   features.
@@ -40,8 +43,8 @@
 #'  run_deseq2(factor = "ARM")
 #'
 #' # Lollipop Plot
-#' plt1 <- plt_lollipop(da_maaslin)
-#' plt2 <- plt_lollipop(da_deseq)
+#' plt1 <- plt_lollipop(da_maaslin, n = 20)
+#' plt2 <- plt_lollipop(da_deseq, n = 20)
 #'
 #' # Check ggplot object
 #' testthat::expect_true("ggplot" %in% class(plt1))
@@ -62,7 +65,7 @@
 #' # Check unknown input type
 #' da_unknown <- da_maaslin %>%
 #'  dplyr::mutate(da_method = "unkown")
-#' testthat::expect_error(plt_lollipop(da_unknown))
+#' testthat::expect_error(plt_lollipop(da_unknown, n = 20))
 #'
 #' @examples
 #' # Def data paths
@@ -75,17 +78,17 @@
 #'   run_maaslin2(fixed_effects = "ARM")
 #'
 #' # Lollipop Plot
-#' plt_lollipop(da_result)
-plt_lollipop <- function(da_result){
+#' plt_lollipop(da_result, n = 20)
+plt_lollipop <- function(da_result, n){
 
   input_type <- da_result %>%
     dplyr::pull(da_method) %>%
     unique()
 
   if(input_type == "maaslin2"){
-    .maaslin_lollipop(da_result = da_result)
+    .maaslin_lollipop(da_result = da_result, n = n)
   } else if(input_type == "deseq2"){
-    .deseq_lollipop(da_result = da_result)
+    .deseq_lollipop(da_result = da_result, n = n)
   } else {
     cli::cli_abort(c(
       "x" = "Unknown input type.",
@@ -100,9 +103,16 @@ plt_lollipop <- function(da_result){
 #' analysis results.
 #'
 #' @param da_result A tibble containing the results of the MaAsLin2 DA analysis.
+#' @param n Maximum number of significant associations to be displayed on the
+#'   plot in ascending order of q-value.
 #'
 #' @return A ggplot2 object representing the lollipop plot.
-.maaslin_lollipop <- function(da_result){
+.maaslin_lollipop <- function(da_result, n){
+
+  da_result <- da_result %>%
+    dplyr::filter(signif == TRUE) %>%
+    dplyr::arrange(q_value) %>%
+    dplyr::slice(1:n)
 
   lim <- da_result %>%
     dplyr::filter(q_value < 0.05) %>%
@@ -146,9 +156,16 @@ plt_lollipop <- function(da_result){
 #' analysis results.
 #'
 #' @param da_result A tibble containing the results of the DESeq2 DA analysis.
+#' @param n Maximum number of significant associations to be displayed on the
+#'   plot in ascending order of p-adjusted value.
 #'
 #' @return A ggplot2 object representing the lollipop plot.
-.deseq_lollipop <- function(da_result){
+.deseq_lollipop <- function(da_result, n){
+
+  da_result <- da_result %>%
+    dplyr::filter(signif == TRUE) %>%
+    dplyr::arrange(padj_value) %>%
+    dplyr::slice(1:n)
 
   lim <- da_result %>%
     dplyr::filter(padj_value < 0.05) %>%
