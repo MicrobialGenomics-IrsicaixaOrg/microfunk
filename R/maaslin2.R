@@ -49,7 +49,7 @@
 #'   provided as a string of 'variable,reference' (semi-colon delimited for
 #'   multiple variables).
 #'
-#' @return Results of the MaAsLin2 analysis on the console.
+#' @return Results of the MaAsLin2 analysis as a tibble.
 #' @export
 #' @autoglobal
 #' @tests
@@ -64,21 +64,21 @@
 #'   run_maaslin2(fixed_effects = "ARM")
 #'
 #' # Test number of significant associations
-#' da_result$results %>%
-#'   dplyr::filter(qval < 0.25) %>%
+#' da_result %>%
+#'   dplyr::filter(signif == TRUE) %>%
 #'   nrow() %>%
 #'   testthat::expect_equal(63)
 #'
 #' # Test P-values
-#' da_result$results %>%
-#'   dplyr::pull(pval) %>%
+#' da_result %>%
+#'   dplyr::pull(p_value) %>%
 #'   mean() %>%
 #'   round(3) %>%
 #'   testthat::expect_equal(0.538)
 #'
 #' # Test Q-values
-#' da_result$results %>%
-#'   dplyr::pull(qval) %>%
+#' da_result %>%
+#'   dplyr::pull(q_value) %>%
 #'   mean() %>%
 #'   round(3) %>%
 #'   testthat::expect_equal(0.802)
@@ -290,5 +290,16 @@ run_maaslin2 <- function(se,
     save_scatter = save_scatter,
     save_models = save_models,
     reference = reference
-  )$result
+  )$result$result %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate(
+      signif = ifelse(
+        qval < max_significance,
+        TRUE,
+        FALSE
+      )
+    ) %>%
+    .da_homogenization()
+
+
 }

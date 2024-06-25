@@ -54,7 +54,7 @@ is 0.05.}
 \item{log2FC}{A numeric value specifying the minimum absolute log2-fold
 change threshold for considering a feature as significant. Default is 0.}
 
-\item{quiet}{Whether to print messages description}
+\item{quiet}{Whether to print messages description. Default is TRUE.}
 }
 \value{
 A tibble containing log2-fold changes, p-values, p-adjusted values
@@ -91,14 +91,14 @@ da_result \%>\%
 
 # Test P-values
 da_result \%>\%
-  dplyr::pull(pvalue) \%>\%
+  dplyr::pull(p_value) \%>\%
   mean() \%>\%
   round(3) \%>\%
   testthat::expect_equal(0.555)
 
 # Test P-adjusted values
 da_result \%>\%
-  dplyr::pull(padj) \%>\%
+  dplyr::pull(padj_value) \%>\%
   mean(na.rm = TRUE) \%>\%
   round(3) \%>\%
   testthat::expect_equal(0.857)

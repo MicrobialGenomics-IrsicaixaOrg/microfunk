@@ -16,6 +16,7 @@
 #'   values as the assay and metadata as the column data.
 #' @param norm A character string specifying the normalization method to apply.
 #'   Supported methods are 'cpm' for copies per million and 'relab' for relative
+#'   abundance.
 #' @param .batch_size An integer specifying the number of columns to process in each
 #'   batch. Default is 10.
 #'

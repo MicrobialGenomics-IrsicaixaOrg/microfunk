@@ -2,7 +2,7 @@
 
 # File R/norm_abundance.R: @tests
 
-test_that("Function norm_abundance() @ L89", {
+test_that("Function norm_abundance() @ L90", {
   # Sample RPK testing data
   column1 <- c("FIRST", "FIRST|Species1", "UNGROUPED","UNGROUPED|Species1", "UNGROUPED|Species2", "UNMAPPED")
   column2 <- c(5, 5, 100, 90, 10, 20)
@@ -57,7 +57,7 @@ test_that("Function norm_abundance() @ L89", {
 })
 
 
-test_that("Function .extract_norm_method() @ L151", {
+test_that("Function .extract_norm_method() @ L152", {
   se <- read_humann(
    file_path = system.file("extdata", "cpm_kegg_error_units.tsv", package = "microfunk"),
    metadata = system.file("extdata", "meta_error_units.csv", package = "microfunk")
@@ -68,7 +68,7 @@ test_that("Function .extract_norm_method() @ L151", {
 })
 
 
-test_that("Function .rpk2cpm() @ L212", {
+test_that("Function .rpk2cpm() @ L213", {
   # Input tibble
   column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
   column2 <- c(20, 100, 90, 10, 5, 5)
@@ -91,7 +91,7 @@ test_that("Function .rpk2cpm() @ L212", {
 })
 
 
-test_that("Function .relab2cpm() @ L259", {
+test_that("Function .relab2cpm() @ L260", {
   # Input tibble
   column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
   column2 <- c(0.16, 0.8, 0.72, 0.08, 0.04, 0.04)
@@ -114,7 +114,7 @@ test_that("Function .relab2cpm() @ L259", {
 })
 
 
-test_that("Function .rpk2relab() @ L307", {
+test_that("Function .rpk2relab() @ L308", {
   # Input tibble
   column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
   column2 <- c(20, 100, 90, 10, 5, 5)
@@ -137,7 +137,7 @@ test_that("Function .rpk2relab() @ L307", {
 })
 
 
-test_that("Function .cpm2relab() @ L353", {
+test_that("Function .cpm2relab() @ L354", {
   # Input tibble
   column1 <- c("UNMAPPED", "UNGROUPED", "UNGROUPED|Species1", "UNGROUPED|Species2", "FIRST", "FIRST|Species1")
   column2 <- c(160000, 800000, 720000, 80000, 40000, 40000)

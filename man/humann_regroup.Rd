@@ -22,7 +22,7 @@ use. Default is "v201901b".}
 \value{
 A SummarizedExperiment object containing gene/pathway abundance
 values regrouped according to the specified annotation as the assay,
-metadata as the column data and information about the regrouped functions
+metadata as the column data and information about the regrouped features
 as the row data.
 }
 \description{

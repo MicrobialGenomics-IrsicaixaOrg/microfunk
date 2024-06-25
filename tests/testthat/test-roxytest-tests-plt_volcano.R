@@ -2,29 +2,43 @@
 
 # File R/plt_volcano.R: @tests
 
-test_that("Function plt_volcano() @ L61", {
+test_that("Function plt_volcano() @ L78", {
   # Def data paths
-  metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
-  file_path <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+    metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+    file_path <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
   
-  # Read HUMAnN3 & MaAsLin2 Analysis
-  da_result <-
-    read_humann(file_path, metadata) %>%
-    run_maaslin2(fixed_effects = "ARM")
+   # Read HUMAnN3 & MaAsLin2 Analysis
+   da_maaslin <- read_humann(file_path, metadata) %>%
+     run_maaslin2(fixed_effects = "ARM")
   
-  # Volcano Plot
-  plt <- plt_volcano(da_result)
+   # Read HUMAnN3 & DESeq2 Analysis
+   da_deseq <- read_humann(file_path, metadata) %>%
+     run_deseq2(factor = "ARM")
   
-  # Check ggplot object
-  testthat::expect_true("ggplot" %in% class(plt))
+   # Volcano Plot
+   plt1 <- plt_volcano(da_maaslin)
+   plt2 <- plt_volcano(da_deseq)
   
-  # Check number of layers
-  testthat::expect_equal(length(plt$layers), 4)
+   # Check ggplot object
+   testthat::expect_true("ggplot" %in% class(plt1))
+   testthat::expect_true("ggplot" %in% class(plt2))
   
-  # Check labels
-  labels <- c("coefficient", "-log10 p-value", "coefficient sign", "q-value",
-              "yintercept", "xintercept", "feature")
+   # Check number of layers
+   testthat::expect_equal(length(plt1$layers), 4)
+   testthat::expect_equal(length(plt2$layers), 4)
   
-  testthat::expect_equal(labels, unname(unlist(plt$labels)))
+   # Check labels
+   labels1 <- c("coefficient", "-log10 p-value", "coefficient sign",
+                 "q-value", "yintercept", "xintercept", "feature")
+   labels2 <- c("log2FoldChange", "-log10 p-value", "log2FC sign",
+                 "p-adjusted value", "yintercept", "xintercept", "feature")
+  
+   testthat::expect_equal(labels1, unname(unlist(plt1$labels)))
+   testthat::expect_equal(labels2, unname(unlist(plt2$labels)))
+  
+  # Check unknown input type
+  da_unknown <- da_maaslin %>%
+   dplyr::mutate(da_method = "unknown")
+  testthat::expect_error(plt_volcano(da_unknown))
 })
 

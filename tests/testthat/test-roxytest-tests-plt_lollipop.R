@@ -2,28 +2,42 @@
 
 # File R/plt_lollipop.R: @tests
 
-test_that("Function plt_lollipop() @ L63", {
+test_that("Function plt_lollipop() @ L83", {
   # Def data paths
-  metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
-  file_path <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")
+  metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
+  file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
   
   # Read HUMAnN3 & MaAsLin2 Analysis
-  da_result <-
-    read_humann(file_path, metadata) %>%
-    run_maaslin2(fixed_effects =  "ARM")
+  da_maaslin <- read_humann(file_path, metadata) %>%
+   run_maaslin2(fixed_effects = "ARM")
+  
+  # Read HUMAnN3 & DESeq2 Analysis
+  da_deseq <- read_humann(file_path, metadata) %>%
+   run_deseq2(factor = "ARM")
   
   # Lollipop Plot
-  plt <- plt_lollipop(da_result)
+  plt1 <- plt_lollipop(da_maaslin, n = 20)
+  plt2 <- plt_lollipop(da_deseq, n = 20)
   
   # Check ggplot object
-  testthat::expect_true("ggplot" %in% class(plt))
+  testthat::expect_true("ggplot" %in% class(plt1))
+  testthat::expect_true("ggplot" %in% class(plt2))
   
   # Check number of layers
-  testthat::expect_equal(length(plt$layers), 2)
+  testthat::expect_equal(length(plt1$layers), 2)
+  testthat::expect_equal(length(plt2$layers), 2)
   
   # Check labels
-  labels <- c("coefficient", "feature", "-log10(pval)", "-log10(pval)", "xend",
-              "feature")
-  testthat::expect_equal(labels, unname(unlist(plt$labels)))
+  labels1 <- c("coefficient", "feature", "-log10(p_value)", "-log10(p_value)",
+               "xend", "feature")
+  labels2 <- c("log2FoldChange", "feature", "-log10(p_value)", "-log10(p_value)",
+              "xend", "feature")
+  testthat::expect_equal(labels1, unname(unlist(plt1$labels)))
+  testthat::expect_equal(labels2, unname(unlist(plt2$labels)))
+  
+  # Check unknown input type
+  da_unknown <- da_maaslin %>%
+   dplyr::mutate(da_method = "unkown")
+  testthat::expect_error(plt_lollipop(da_unknown, n = 20))
 })
 
