@@ -18,7 +18,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Judit Farré-Badia \email{judit.farre@autonoma.cat}
+\strong{Maintainer}: Francesc Català-Moll \email{fcatala@irsicaixa.es} (\href{https://orcid.org/0000-0002-2354-8648}{ORCID})
+
+Authors:
+\itemize{
+  \item Judit Farré-Badia \email{judit.farre@autonoma.cat}
+}
 
 }
 \keyword{internal}

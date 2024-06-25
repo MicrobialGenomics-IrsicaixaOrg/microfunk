@@ -4,9 +4,14 @@ Version: 0.99.0
 Authors@R: 
     c(person(given = "Judit",
              family = "Farré-Badia",
-             role = c("aut", "cre"),
+             role = c("aut"),
              email = "judit.farre@autonoma.cat",
-             comment = c(ORCID = " "))
+             comment = c(ORCID = " ")), 
+      person(given = "Francesc",
+             family = "Català-Moll",
+             role = c("aut", "cre"),
+             email = "fcatala@irsicaixa.es",
+             comment = c(ORCID = "0000-0002-2354-8648"))
     )
 Description: What the package does (one paragraph).
 License: GPL (>= 3)
