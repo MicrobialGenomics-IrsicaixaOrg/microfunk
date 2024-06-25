@@ -18,14 +18,7 @@ is c("ec", "eggnog", "go", "ko", "pfam").}
 to fetch. Default is "v201901b".}
 
 \item{overwrite}{A logical indicating whether to overwrite existing files in
-the cache directory. Default is FALSE.
-
-This function first checks if the provided annotation is valid. If
-not, it aborts with a message indicating the available annotations. Then,
-it creates the microfunk cache directory if it does not exist, and checks
-the version compatibility. Finally, it fetches the databases from AWS and
-saves them to the cache directory. If the overwrite option is TRUE,
-existing files in the cache directory will be overwritten.}
+the cache directory. Default is FALSE.}
 }
 \value{
 invisible TRUE
@@ -35,6 +28,14 @@ This function fetches HUMAnN3 databases from AWS based on the provided
 annotation and version. If the databases do not exist in the cache directory,
 or if the overwrite option is enabled, the function will download the
 databases from AWS.
+}
+\details{
+This function first checks if the provided annotation is valid. If
+not, it aborts with a message indicating the available annotations. Then,
+it creates the microfunk cache directory if it does not exist, and checks
+the version compatibility. Finally, it fetches the databases from AWS and
+saves them to the cache directory. If the overwrite option is TRUE,
+existing files in the cache directory will be overwritten.
 }
 \examples{
 # Fetch HUMAnN3 databases with default parameters

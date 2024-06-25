@@ -130,7 +130,7 @@
 #' @param overwrite A logical indicating whether to overwrite existing files in
 #'   the cache directory. Default is FALSE.
 #'
-#'   This function first checks if the provided annotation is valid. If
+#' @details This function first checks if the provided annotation is valid. If
 #'   not, it aborts with a message indicating the available annotations. Then,
 #'   it creates the microfunk cache directory if it does not exist, and checks
 #'   the version compatibility. Finally, it fetches the databases from AWS and

@@ -147,9 +147,9 @@ run_deseq2 <- function(se,
         padj < max_significance & abs(log2FoldChange) >= log2FC,
         TRUE,
         FALSE
-      )
+      ),
+      metadata = factor
     ) %>%
-    dplyr::mutate(metadata = factor) %>%
     .da_homogenization()
 
   lfcs

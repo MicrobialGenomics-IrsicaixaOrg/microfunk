@@ -23,6 +23,7 @@
 #'   features.
 #' @export
 #' @autoglobal
+#' @import ggplot2
 #' @tests
 #'  # Def data paths
 #'   metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
@@ -74,7 +75,7 @@
 #'
 #' # Volcano Plot
 #' plt_volcano(da_result)
-plt_volcano <- function(da_result){
+plt_volcano <- function(da_result) {
 
   input_type <- da_result %>%
     dplyr::pull(da_method) %>%
@@ -99,8 +100,9 @@ plt_volcano <- function(da_result){
 #'
 #' @param da_result A tibble containing the results of the MaAsLin2 DA analysis.
 #'
+#' @autoglobal
 #' @return A ggplot2 object representing the volcano plot.
-.maaslin_volcano <- function(da_result){
+.maaslin_volcano <- function(da_result) {
 
   lower <- stats::quantile(da_result$coefficient, 0.01)
   upper <- stats::quantile(da_result$coefficient, 0.99)
@@ -108,50 +110,50 @@ plt_volcano <- function(da_result){
   max_value <- max(abs(lower), abs(upper))
 
   da_result %>%
-    ggplot2::ggplot(mapping = ggplot2::aes(x = coefficient, y = -log10(p_value))) +
-
-    ggplot2::geom_point(
-      ggplot2::aes(shape = factor(ifelse(q_value < 0.05, "s", "n")),
-                   color = factor(ifelse(q_value > 0.05, "n",
-                                         ifelse(coefficient > 0, "pos", "neg")))
-      )) +
-
-    ggplot2::xlim(-max_value, max_value) +
-
-    ggplot2::scale_color_manual(values =
-                                  c("pos" = "brown1", "neg" = "cornflowerblue",
-                                    "n" = "grey"),
-                                labels = c("pos" = "Positive", "neg" = "Negative",
-                                           "n" = "Not significant")) +
-
-    ggplot2::scale_shape_manual(values = c("s" = 20, "n" = 46),
-                                labels = c("n" = "Not significant", "s" = "Significant (< 0.05)")) +
-
-    ggplot2::geom_hline(
+    ggplot(mapping = aes(x = coefficient, y = -log10(p_value))) +
+    geom_point(aes(shape = factor(ifelse(
+      q_value < 0.05, "s", "n"
+    )), color = factor(ifelse(
+      q_value > 0.05, "n", ifelse(coefficient > 0, "pos", "neg")
+    )))) +
+    xlim(-max_value, max_value) +
+    scale_color_manual(
+      values =
+        c(
+          "pos" = "brown1",
+          "neg" = "cornflowerblue",
+          "n" = "grey"
+        ),
+      labels = c("pos" = "Positive", "neg" = "Negative", "n" = "Not significant")
+    ) +
+    scale_shape_manual(
+      values = c("s" = 20, "n" = 46),
+      labels = c("n" = "Not significant", "s" = "Significant (< 0.05)")
+    ) +
+    geom_hline(
       yintercept = -log10(0.05),
       linetype = 2,
       linewidth = 0.5,
       colour = "grey"
     ) +
-
-    ggplot2::geom_vline(
+    geom_vline(
       xintercept = 0,
       linetype = 2,
       linewidth = 0.25,
       colour = "grey"
     ) +
-
-    ggplot2::labs(x = "coefficient", y = "-log10 p-value", color = "coefficient sign",
-                  shape = "q-value") +
-
+    labs(
+      x = "coefficient",
+      y = "-log10 p-value",
+      color = "coefficient sign",
+      shape = "q-value"
+    ) +
     ggrepel::geom_text_repel(
-      data = dplyr::filter(
-        da_result, q_value < 0.05),
-      ggplot2::aes(label = feature),
+      data = dplyr::filter(da_result, q_value < 0.05),
+      aes(label = feature),
       size = 2.5
     ) +
-
-    ggplot2::theme_minimal()
+    theme_minimal()
 
 }
 
@@ -163,53 +165,53 @@ plt_volcano <- function(da_result){
 #'
 #' @param da_result A tibble containing the results of the DESeq2 DA analysis.
 #'
+#' @autoglobal
 #' @return A ggplot2 object representing the volcano plot.
-.deseq_volcano <- function(da_result){
+.deseq_volcano <- function(da_result) {
 
   da_result %>%
-    ggplot2::ggplot(mapping = ggplot2::aes(x = log2FC, y = -log10(p_value))) +
-
-    ggplot2::geom_point(
-      ggplot2::aes(shape = factor(ifelse(padj_value < 0.05, "s", "n")),
-                   color = factor(ifelse(padj_value > 0.05, "n",
-                                         ifelse(log2FC > 0, "pos", "neg")))
-      )) +
-
-    ggplot2::scale_color_manual(values =
-                                  c("pos" = "brown1", "neg" = "cornflowerblue",
-                                    "n" = "grey"),
-                                labels = c("pos" = "Positive", "neg" = "Negative",
-                                           "n" = "Not significant")) +
-
-    ggplot2::scale_shape_manual(values = c("s" = 20, "n" = 46),
-                                labels = c("n" = "Not significant", "s" = "Significant (< 0.05)")) +
-
-    ggplot2::geom_hline(
+    ggplot(mapping = aes(x = log2FC, y = -log10(p_value))) +
+    geom_point(aes(shape = factor(ifelse(
+      padj_value < 0.05, "s", "n"
+    )), color = factor(ifelse(
+      padj_value > 0.05, "n", ifelse(log2FC > 0, "pos", "neg")
+    )))) +
+    scale_color_manual(
+      values =
+        c(
+          "pos" = "brown1",
+          "neg" = "cornflowerblue",
+          "n" = "grey"
+        ),
+      labels = c("pos" = "Positive", "neg" = "Negative", "n" = "Not significant")
+    ) +
+    scale_shape_manual(
+      values = c("s" = 20, "n" = 46),
+      labels = c("n" = "Not significant", "s" = "Significant (< 0.05)")
+    ) +
+    geom_hline(
       yintercept = -log10(0.05),
       linetype = 2,
       linewidth = 0.5,
       colour = "grey"
     ) +
-
-    ggplot2::geom_vline(
+    geom_vline(
       xintercept = 0,
       linetype = 2,
       linewidth = 0.25,
       colour = "grey"
     ) +
-
-    ggplot2::labs(x = "log2FoldChange", y = "-log10 p-value", color = "log2FC sign",
-                  shape = "p-adjusted value") +
-
+    labs(
+      x = "log2FoldChange",
+      y = "-log10 p-value",
+      color = "log2FC sign",
+      shape = "p-adjusted value"
+    ) +
     ggrepel::geom_text_repel(
-      data = dplyr::filter(
-        da_result, padj_value < 0.05),
-      ggplot2::aes(label = feature),
+      data = dplyr::filter(da_result, padj_value < 0.05),
+      aes(label = feature),
       size = 2.5
     ) +
-
-    ggplot2::theme_minimal()
-
-
+    theme_minimal()
 }
 

@@ -2,7 +2,7 @@
 
 # File R/plt_volcano.R: @tests
 
-test_that("Function plt_volcano() @ L77", {
+test_that("Function plt_volcano() @ L78", {
   # Def data paths
     metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
     file_path <- system.file("extdata", "All_genefam_cpm_kegg.tsv", package = "microfunk")

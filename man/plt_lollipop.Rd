@@ -4,7 +4,7 @@
 \alias{plt_lollipop}
 \title{Generate a Lollipop Plot for MaAsLin2 Analysis Results}
 \usage{
-plt_lollipop(da_result, n)
+plt_lollipop(da_result, n = 20)
 }
 \arguments{
 \item{da_result}{A tibble containing the result of the differential analysis.}

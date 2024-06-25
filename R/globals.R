@@ -2,13 +2,22 @@
 
 utils::globalVariables(c(
   # <.check_regroup>
+  # <.maaslin_lollipop>
+  # <.deseq_lollipop>
   ".",
   # <.maaslin_homogenize>
   "coef",
+  # <.maaslin_lollipop>
+  # <.maaslin_volcano>
+  "coefficient",
   # <plt_lollipop>
   # <plt_volcano>
   "da_method",
   # <.maaslin_homogenize>
+  # <.maaslin_lollipop>
+  # <.deseq_lollipop>
+  # <.maaslin_volcano>
+  # <.deseq_volcano>
   "feature",
   # <.deseq_homogenize>
   # <run_deseq2>
@@ -30,19 +39,33 @@ utils::globalVariables(c(
   "id_name",
   # <.deseq_homogenize>
   "lfcSE",
+  # <.deseq_lollipop>
+  # <.deseq_volcano>
+  "log2FC",
   # <.deseq_homogenize>
   # <run_deseq2>
   "log2FoldChange",
   # <.maaslin_homogenize>
   # <.deseq_homogenize>
   "metadata",
+  # <.maaslin_lollipop>
+  # <.deseq_lollipop>
+  # <.maaslin_volcano>
+  # <.deseq_volcano>
+  "p_value",
   # <.deseq_homogenize>
   # <run_deseq2>
   "padj",
+  # <.deseq_lollipop>
+  # <.deseq_volcano>
+  "padj_value",
   # <.maaslin_homogenize>
   "pval",
   # <.deseq_homogenize>
   "pvalue",
+  # <.maaslin_lollipop>
+  # <.maaslin_volcano>
+  "q_value",
   # <.maaslin_homogenize>
   # <.maaslin2_quietly>
   "qval",

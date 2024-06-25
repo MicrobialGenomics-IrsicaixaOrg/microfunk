@@ -29,6 +29,7 @@
 #'   features.
 #' @export
 #' @autoglobal
+#' @import ggplot2
 #' @tests
 #' # Def data paths
 #' metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
@@ -79,7 +80,7 @@
 #'
 #' # Lollipop Plot
 #' plt_lollipop(da_result, n = 20)
-plt_lollipop <- function(da_result, n){
+plt_lollipop <- function(da_result, n = 20){
 
   input_type <- da_result %>%
     dplyr::pull(da_method) %>%
@@ -106,13 +107,22 @@ plt_lollipop <- function(da_result, n){
 #' @param n Maximum number of significant associations to be displayed on the
 #'   plot in ascending order of q-value.
 #'
+#' @autoglobal
 #' @return A ggplot2 object representing the lollipop plot.
-.maaslin_lollipop <- function(da_result, n){
+.maaslin_lollipop <- function(da_result, n) {
 
   da_result <- da_result %>%
     dplyr::filter(signif == TRUE) %>%
-    dplyr::arrange(q_value) %>%
-    dplyr::slice(1:n)
+    dplyr::arrange(q_value)
+
+  if (nrow(da_result) > n) {
+    cli::cli_inform(c(
+      "!" ="Features present in all methods are greater than the cutoff n = {n}",
+      "i" = "The top {n} significant features will be used"
+    ))
+  }
+
+  da_result <- dplyr::slice(da_result, 1:n)
 
   lim <- da_result %>%
     dplyr::filter(q_value < 0.05) %>%
@@ -123,32 +133,27 @@ plt_lollipop <- function(da_result, n){
     c(-.,.)
 
   da_result %>%
-
     dplyr::filter(q_value < 0.05) %>%
-    ggplot2::ggplot(mapping = ggplot2::aes(x = coefficient,
-                                           y = stats::reorder(feature, coefficient),
-                                           fill = -log10(p_value),
-                                           color = -log10(p_value))) +
-
-    ggplot2::geom_segment(ggplot2::aes(xend = 0, yend = feature),
-                          linewidth = 0.5) +
-
-    ggplot2::geom_point(shape = 21, size = 3) +
-
-    ggplot2::scale_color_gradientn(colors =
-                                     RColorBrewer::brewer.pal(11, "Spectral"),
-                                   limits = lim) +
-    ggplot2::scale_fill_gradientn(colors =
-                                    RColorBrewer::brewer.pal(11, "Spectral"),
-                                  limits = lim) +
-
-    ggplot2::labs(x = "coefficient", y = "feature") +
-
-    ggplot2::theme(axis.text.y = ggplot2::element_text(size = 7.5)) +
-
-    ggplot2::theme_minimal()
+    ggplot(aes(
+      x = coefficient,
+      y = stats::reorder(feature, coefficient),
+      fill = -log10(p_value),
+      color = -log10(p_value)
+    )) +
+    geom_segment(aes(xend = 0, yend = feature), linewidth = 0.5) +
+    geom_point(shape = 21, size = 3) +
+    scale_color_gradientn(
+      colors = RColorBrewer::brewer.pal(11, "Spectral"),
+      limits = lim
+    ) +
+    scale_fill_gradientn(
+      colors = RColorBrewer::brewer.pal(11, "Spectral"),
+      limits = lim
+    ) +
+    labs(x = "coefficient", y = "feature") +
+    theme(axis.text.y = element_text(size = 7.5)) +
+    theme_minimal()
 }
-
 
 #' Plot DESeq2 Lollipop Plot
 #'
@@ -159,13 +164,22 @@ plt_lollipop <- function(da_result, n){
 #' @param n Maximum number of significant associations to be displayed on the
 #'   plot in ascending order of p-adjusted value.
 #'
+#' @autoglobal
 #' @return A ggplot2 object representing the lollipop plot.
 .deseq_lollipop <- function(da_result, n){
 
   da_result <- da_result %>%
     dplyr::filter(signif == TRUE) %>%
-    dplyr::arrange(padj_value) %>%
-    dplyr::slice(1:n)
+    dplyr::arrange(padj_value)
+
+  if (nrow(da_result) > n) {
+    cli::cli_inform(c(
+      "!" = "Features present in all methods are greater than the cutoff n = {n}",
+      "i" = "The top {n} significant features will be used"
+    ))
+  }
+
+  da_result <- dplyr::slice(da_result, 1:n)
 
   lim <- da_result %>%
     dplyr::filter(padj_value < 0.05) %>%
@@ -176,31 +190,25 @@ plt_lollipop <- function(da_result, n){
     c(-.,.)
 
   da_result %>%
-
     dplyr::filter(padj_value < 0.05) %>%
-    ggplot2::ggplot(mapping = ggplot2::aes(x = log2FC,
-                                           y = stats::reorder(feature, log2FC),
-                                           fill = -log10(p_value),
-                                           color = -log10(p_value))) +
-
-    ggplot2::geom_segment(ggplot2::aes(xend = 0, yend = feature),
-                          linewidth = 0.5) +
-
-    ggplot2::geom_point(shape = 21, size = 3) +
-
-    ggplot2::scale_color_gradientn(colors =
-                                     RColorBrewer::brewer.pal(11, "Spectral"),
-                                   limits = lim) +
-    ggplot2::scale_fill_gradientn(colors =
-                                    RColorBrewer::brewer.pal(11, "Spectral"),
-                                  limits = lim) +
-
-    ggplot2::labs(x = "log2FoldChange", y = "feature") +
-
-    ggplot2::theme(axis.text.y = ggplot2::element_text(size = 7.5)) +
-
-    ggplot2::theme_minimal()
-
-
+    ggplot(mapping = aes(
+      x = log2FC,
+      y = stats::reorder(feature, log2FC),
+      fill = -log10(p_value),
+      color = -log10(p_value)
+    )) +
+    geom_segment(aes(xend = 0, yend = feature), linewidth = 0.5) +
+    geom_point(shape = 21, size = 3) +
+    scale_color_gradientn(
+      colors = RColorBrewer::brewer.pal(11, "Spectral"),
+      limits = lim
+    ) +
+    scale_fill_gradientn(
+      colors = RColorBrewer::brewer.pal(11, "Spectral"),
+      limits = lim
+    ) +
+    labs(x = "log2FoldChange", y = "feature") +
+    theme(axis.text.y = element_text(size = 7.5)) +
+    theme_minimal()
 }
 

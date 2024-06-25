@@ -2,7 +2,7 @@
 
 # File R/plt_lollipop.R: @tests
 
-test_that("Function plt_lollipop() @ L82", {
+test_that("Function plt_lollipop() @ L83", {
   # Def data paths
   metadata <- system.file("extdata", "reduced_meta.csv", package = "microfunk")
   file_path <- system.file("extdata", "reduced_genefam_cpm_kegg.tsv", package = "microfunk")
