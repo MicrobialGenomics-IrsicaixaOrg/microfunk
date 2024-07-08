@@ -50,7 +50,7 @@ family abundance values in the assay slot and metadata as the column
 data.
 
 ```{r read humann}
-devtools::load_all()
+library(microfunk)
 
 file_path <- system.file(
 							"extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk")
