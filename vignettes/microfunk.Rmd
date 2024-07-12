@@ -53,8 +53,8 @@ data.
 library(microfunk)
 
 file_path <- system.file(
-							"extdata", "reduced_genefam_rpk_uniref.tsv", package = "microfunk")
-metadata <- system.file("extdata", "ex_meta.csv", package = "microfunk")
+							"extdata", "reduced_genefam_rpk_uniref.tsv.gz", package = "microfunk")
+metadata <- system.file("extdata", "uniref_red_meta.csv", package = "microfunk")
 
 data_uniref <- read_humann(file_path, metadata)
 
