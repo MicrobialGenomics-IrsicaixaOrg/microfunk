@@ -239,8 +239,4 @@ lollipop <- plt_lollipop(da_maaslin, n = 25)
 
 ![](images/maaslin_loliplot.png){width="547"}
 
-## Session Info
 
-```{r}
-devtools::session_info()
-```
